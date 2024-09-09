@@ -13,7 +13,6 @@ function setup() {
   socket.onmessage = function (event) {
     let angle = parseFloat(event.data);
     console.log("Angle received: " + angle);
-
     // Move forward if the angle is greater than the threshold
     if (angle > forwrdangleThreshold) {
       forwardSpeed = 5; // Go Forward
@@ -30,16 +29,12 @@ function setup() {
 function draw() {
   background(30);  // Dark background
   lights();  // Add lighting to the scene
-
+  
   // Set camera perspective
   camera(0, -300, 600, 0, 0, 0, 0, 1, 0);
-
-  // Draw 3D Avatar (a glowing sphere)
-  push();
-  translate(0, 0, avatarZ);  // Move avatar along Z-axis
-  ambientMaterial(102, 255, 204);  // Glowing greenish material
-  sphere(50);  // 3D sphere with radius 50
-  pop();
+  
+  // Draw the 3D avatar as a person in a spacesuit
+  drawSpacesuitAvatar();
 
   // Move avatar forward/backward
   avatarZ -= forwardSpeed;
@@ -57,6 +52,55 @@ function draw() {
   textAlign(CENTER);
   text("Lean forward or backward to move the 3D avatar", 0, 0);
   pop();
+}
+
+function drawSpacesuitAvatar() {
+  push();
+  translate(0, 0, avatarZ);  // Move avatar along Z-axis
+
+  // Head (helmet)
+  push();
+  translate(0, -100, 0);  // Head position
+  ambientMaterial(200, 200, 255);  // Light blue helmet
+  sphere(30);  // Head sphere
+  pop();
+
+  // Body
+  push();
+  translate(0, 0, 0);  // Body position
+  ambientMaterial(255, 255, 255);  // White spacesuit body
+  box(60, 100, 40);  // Body box
+  pop();
+
+  // Left arm
+  push();
+  translate(-50, -25, 0);  // Arm position
+  ambientMaterial(255, 255, 255);  // White arm
+  box(20, 60, 20);  // Left arm box
+  pop();
+
+  // Right arm
+  push();
+  translate(50, -25, 0);  // Arm position
+  ambientMaterial(255, 255, 255);  // White arm
+  box(20, 60, 20);  // Right arm box
+  pop();
+
+  // Left leg
+  push();
+  translate(-20, 70, 0);  // Left leg position
+  ambientMaterial(255, 255, 255);  // White leg
+  box(20, 60, 20);  // Left leg box
+  pop();
+
+  // Right leg
+  push();
+  translate(20, 70, 0);  // Right leg position
+  ambientMaterial(255, 255, 255);  // White leg
+  box(20, 60, 20);  // Right leg box
+  pop();
+
+  pop();  // End of avatar
 }
 
 function windowResized() {
