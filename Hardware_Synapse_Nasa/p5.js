@@ -2,7 +2,8 @@ let socket;
 let avatarX = 300;
 let avatarY = 300;
 let forwardSpeed = 0;
-let angleThreshold = 160; // Threshold for forward movement
+let forwrdangleThreshold = 120; // Threshold for forward movement
+let backwardangleThreshold = 60; // Threshold for backward movement
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -14,9 +15,13 @@ function setup() {
     let angle = parseFloat(event.data);
     console.log("Angle received: " + angle);
     // Move forward if the angle is greater than the threshold
-    if (angle >= angleThreshold) {
-      forwardSpeed = 5; // Increase speed
-    } else {
+    if (angle > forwrdangleThreshold) {
+      forwardSpeed = 5; // Go Forward
+    }
+    else if (angle < backwardangleThreshold) {
+      forwardSpeed = -5; // Go Backward
+    }
+    else {
       forwardSpeed = 0; // Stop movement
     }
   };
@@ -50,7 +55,7 @@ function draw() {
   fill(255);
   textSize(16);
   textAlign(CENTER);
-  text("Lean forward to move the avatar", width / 2, 30);
+  text("Lean forward or backward to move the avatar", width / 2, 30);
 }
 
 function windowResized() {
