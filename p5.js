@@ -37,9 +37,9 @@ function draw() {
       let leftStickY = gamepad.axes[1]; // Get Y-axis value of left joystick (range: -1 to 1)
 
       // Map joystick input to forward speed
-      if (leftStickY < -0.5) {
+      if (leftStickY < 0.5) {
         forwardSpeed = -5;  // Move forward
-      } else if (leftStickY > 0.5) {
+      } else if (leftStickY > -0.5) {
         forwardSpeed = 5;  // Move backward
       } else {
         forwardSpeed = 0;  // Stop movement
