@@ -13,11 +13,9 @@ function setup() {
   // Listen for gamepad connection event
   window.addEventListener("gamepadconnected", (event) => {
     console.log("Gamepad connected at index " + event.gamepad.index);
-    gamepadIndex = event.gamepad.index;  // Save the index of the connected gamepad
+    gamepadIndex = event.gamepad.index;  
   });
-
-  // Set the default font
-  textFont('sans-serif'); // Use a default system font
+  textFont('sans-serif'); 
 }
 
 function draw() {
@@ -39,9 +37,9 @@ function draw() {
       let leftStickY = gamepad.axes[1]; // Get Y-axis value of left joystick (range: -1 to 1)
 
       // Map joystick input to forward speed
-      if (leftStickY < -0.5) {
+      if (leftStickY < 0.5) {
         forwardSpeed = 5;  // Move forward
-      } else if (leftStickY > 0.5) {
+      } else if (leftStickY > =0.5) {
         forwardSpeed = -5;  // Move backward
       } else {
         forwardSpeed = 0;  // Stop movement
