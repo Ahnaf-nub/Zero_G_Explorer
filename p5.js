@@ -1,29 +1,23 @@
-let socket;
 let avatarZ = 0;
 let forwardSpeed = 0;
 let forwrdangleThreshold = 120; // Threshold for forward movement
 let backwardangleThreshold = 60; // Threshold for backward movement
+let rightturnangleThreshold = 120; // Threshold for right turn
+let leftturnangleThreshold = 60; // Threshold for left turn;
+
+let gamepadIndex = -1;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);  // Enable WebGL for 3D
 
-  // Establish WebSocket connection
-  socket = new WebSocket("ws://192.168.10.126:81"); // Replace with ESP32 IP
+  // Listen for gamepad connection event
+  window.addEventListener("gamepadconnected", (event) => {
+    console.log("Gamepad connected at index " + event.gamepad.index);
+    gamepadIndex = event.gamepad.index;  // Save the index of the connected gamepad
+  });
 
-  socket.onmessage = function (event) {
-    let angle = parseFloat(event.data);
-    console.log("Angle received: " + angle);
-    // Move forward if the angle is greater than the threshold
-    if (angle > forwrdangleThreshold) {
-      forwardSpeed = 5; // Go Forward
-    }
-    // Move backward if the angle is smaller than the backward threshold
-    else if (angle < backwardangleThreshold) {
-      forwardSpeed = -5; // Go Backward
-    } else {
-      forwardSpeed = 0; // Stop movement
-    }
-  };
+  // Set the default font
+  textFont('sans-serif'); // Use a default system font
 }
 
 function draw() {
@@ -35,6 +29,27 @@ function draw() {
   
   // Draw the 3D avatar as a person in a spacesuit
   drawSpacesuitAvatar();
+
+  // Handle gamepad input for controlling the avatar
+  if (gamepadIndex !== -1) {
+    let gamepad = navigator.getGamepads()[gamepadIndex];
+
+    if (gamepad) {
+      // Assuming the Y-axis of the left joystick controls forward/backward movement
+      let leftStickY = gamepad.axes[1]; // Get Y-axis value of left joystick (range: -1 to 1)
+
+      // Map joystick input to forward speed
+      if (leftStickY < -0.5) {
+        forwardSpeed = 5;  // Move forward
+      } else if (leftStickY > 0.5) {
+        forwardSpeed = -5;  // Move backward
+      } else {
+        forwardSpeed = 0;  // Stop movement
+      }
+
+      // You can add additional controls for turning or other actions
+    }
+  }
 
   // Move avatar forward/backward
   avatarZ -= forwardSpeed;
@@ -50,7 +65,7 @@ function draw() {
   textSize(20);
   fill(255);
   textAlign(CENTER);
-  text("Lean forward or backward to move the 3D avatar", 0, 0);
+  text("Use joystick to move the 3D avatar", 0, 0);
   pop();
 }
 
