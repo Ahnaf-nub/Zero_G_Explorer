@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+passlib
+supabase
+python-dotenv
+pydantic
+psycopg2
+bcrypt
