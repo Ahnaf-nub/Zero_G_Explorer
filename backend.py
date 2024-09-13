@@ -34,6 +34,8 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
+
+
 @app.post("/register")
 def register_user(username: str = Form(...), password: str = Form(...), space_station: str = Form(...)):
     user_exists = supabase.table("users").select("*").eq("username", username).execute()
@@ -89,6 +91,12 @@ def update_score(username: str, score: int):
         raise HTTPException(status_code=500, detail="Error updating score")
 
     return {"message": "Score updated successfully"}
+
+
+@app.get("/")
+def homePage(request: Request):
+    return templates.TemplateResponse("game.html" , {"request": request})
+
 
 @app.get("/register")
 def show_registration_form(request: Request):
