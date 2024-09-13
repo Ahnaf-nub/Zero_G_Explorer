@@ -6,3 +6,5 @@ python-dotenv
 pydantic
 psycopg2
 bcrypt
+jninja2
+python-multipart
