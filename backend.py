@@ -1,133 +1,161 @@
-from fastapi import FastAPI, HTTPException, Form, Request, Depends, Response
-from fastapi_login import LoginManager
-from pydantic import BaseModel
-from supabase import create_client, Client
-from passlib.hash import pbkdf2_sha256
-from dotenv import load_dotenv
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, Depends, HTTPException, Request, Form
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+from supabase import create_client
+from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
 import os
+import bcrypt
 
 load_dotenv()
 
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY')
-SECRET = os.getenv('SECRET')  # Ensure SECRET key is defined in your .env
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+JWT_SECRET = os.getenv("JWT_SECRET")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Initialize Supabase client
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Configure Login Manager
-manager = LoginManager(SECRET, token_url="/auth/login", use_cookie=True)
-manager.cookie_name = "auth"
 
-# User model for registration
-class User(BaseModel):
-    username: str
-    password: str
-    space_station: str
-    score: int = 0
+# Pydantic model for user input
+class TokenData(BaseModel):
+    username: str = None
 
-# Helper function to hash password using pbkdf2_sha256
+
+# Create JWT token
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+# Verify JWT token
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return TokenData(username=username)
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+# Dependency to get current user based on token
+async def get_current_user(request: Request):
+    token = request.cookies.get("token")
+    if token is None:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return verify_token(token)
+
+
+# Hash a password
 def hash_password(password: str) -> str:
-    return pbkdf2_sha256.hash(password)
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-# Helper function to verify password using pbkdf2_sha256
+
+# Verify password
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pbkdf2_sha256.verify(plain_password, hashed_password)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 
-# Load user from database (Supabase)
-@manager.user_loader()
-def load_user(username: str):
-    user_data = supabase.table("users").select("*").eq("username", username).execute()
-    if user_data.data:
-        return user_data.data[0]  # Return the first result if user exists
-    return None
-
-
-# Home page (protected by login)
-@app.get("/")
-def home_page(user=Depends(manager)):
-    if not user:
-        return RedirectResponse(url="/register")  # Redirect to register if user not authenticated
-
-    return templates.TemplateResponse("game.html", {"request": Request, "username": user['username']})
-
-
-# Display registration form
-@app.get("/register")
-def show_registration_form(request: Request, user=Depends(manager)):
-    if user:
-        return RedirectResponse(url="/")  # Redirect to game if user is already logged in
-    return templates.TemplateResponse("register.html", {"request": request})
-
-
-# Handle user registration
-@app.post("/register")
-def register_user(username: str = Form(...), password: str = Form(...), space_station: str = Form(...)):
-    user_exists = supabase.table("users").select("*").eq("username", username).execute()
-    if user_exists.data:
-        raise HTTPException(status_code=400, detail="Username already exists")
-
-    # Hash the password
-    hashed_password = hash_password(password)
-    print(f"Registering user: {username}")
-    print(f"Plain password: {password}")  # Print the plain password
-    print(f"Hashed password: {hashed_password}")  # Print the hashed password
-
-    # Insert the user into Supabase
-    response = supabase.table("users").insert({
-        "username": username,
-        "password": hashed_password,
-        "space_station": space_station
-    }).execute()
-
-    if response.error:
-        raise HTTPException(status_code=500, detail="Error creating user")
-    
-    return RedirectResponse(url="/login", status_code=302)  # Redirect to login after successful registration
-
-
-# Handle user login
-@app.post("/auth/login")
-def login_user(response: Response, username: str = Form(...), password: str = Form(...)):
-    print(f"Attempting login for user: {username}")
-    
-    # Load user from Supabase
-    user = load_user(username)
-    if not user:
-        print("User not found in the database.")
-        raise HTTPException(status_code=404, detail="User not found")
-
-    print(f"Stored hashed password for {username}: {user['password']}")
-    print(f"Entered plain password: {password}")
-
-    # Generate and set the authentication cookie
-    access_token = manager.create_access_token(data={"sub": username})
-    manager.set_cookie(response, access_token)
-
-    print("Login successful!")
-    return RedirectResponse(url="/", status_code=302)
-
-
-# Display login form
-@app.get("/login")
-def show_login_form(request: Request, user=Depends(manager)):
-    if user:
-        return RedirectResponse(url="/")  # Redirect to game if user is already logged in
+# Login route (for GET and POST requests)
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
-# Logout endpoint
+@app.post("/login", response_class=HTMLResponse)
+async def login(request: Request, username: str = Form(...), password: str = Form(...)):
+    user_response = supabase.table("users").select("*").eq("username", username).single().execute()
+
+    if not user_response.data:
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid username or password"})
+
+    user_data = user_response.data
+    if not verify_password(password, user_data["password_hash"]):
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid username or password"})
+
+    # Create JWT token after successful login
+    access_token = create_access_token(data={"sub": username}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    response = RedirectResponse(url="/home", status_code=302)
+    response.set_cookie(key="token", value=access_token)
+    return response
+
+
+# Home page route (Protected)
+@app.get("/home", response_class=HTMLResponse)
+async def home_page(request: Request, current_user: TokenData = Depends(get_current_user)):
+    return templates.TemplateResponse("home.html", {"request": request, "username": current_user.username})
+
+
+# Game page route (Protected)
+@app.get("/game", response_class=HTMLResponse)
+async def game_page(request: Request, current_user: TokenData = Depends(get_current_user)):
+    return templates.TemplateResponse("game.html", {"request": request, "username": current_user.username})
+
+
+# Register page (Public, no authentication needed)
+@app.get("/register", response_class=HTMLResponse)
+async def register_get(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
+
+@app.post("/register", response_class=HTMLResponse)
+async def register_post(request: Request, username: str = Form(...), password: str = Form(...), space_station: str = Form(...)):
+    # Check if username already exists
+    user_response = supabase.table("users").select("*").eq("username", username).execute()
+
+    # Check if the user already exists
+    if user_response.get('data'):
+        # If the username already exists, return an error message
+        return templates.TemplateResponse("register.html", {"request": request, "error": "Username already taken"})
+
+    # Hash the password
+    password_hash = hash_password(password)
+
+    # Save the user in the database
+    insert_response = supabase.table("users").insert({
+        "username": username, 
+        "password_hash": password_hash, 
+        "space_station": space_station
+    }).execute()
+
+    # Handle possible errors during user insertion
+    if insert_response.get('error'):
+        # If there's an error during the insertion, display an error message
+        return templates.TemplateResponse("register.html", {"request": request, "error": "Registration failed. Please try again."})
+
+    # Redirect to login page after successful registration
+    return RedirectResponse(url="/login", status_code=302)
+
+# Root URL redirects to the login page
+@app.get("/", response_class=HTMLResponse)
+async def root_redirect():
+    return RedirectResponse(url="/login", status_code=302)
+
+
+# Logout route
 @app.get("/logout")
-def logout_user(response: Response):
-    manager.set_cookie(response, "")  # Clear the cookie by setting an empty value
-    return RedirectResponse(url="/login")
+async def logout():
+    response = RedirectResponse(url="/login", status_code=302)
+    response.delete_cookie(key="token")
+    return response
 
 if __name__ == "__main__":
     import uvicorn

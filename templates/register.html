@@ -11,7 +11,7 @@
 <body>
     <h1>Space Station Registration</h1>
     <div class="form-container">
-        <form action="/register" method="post">
+        <form action="/register" method="POST">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter Your Username" required>
 
@@ -19,10 +19,14 @@
             <input type="password" id="password" name="password" placeholder="Enter Your Password" required>
 
             <label for="space_station">Space Station Name</label>
-            <input type="text" id="space_station" name="space_station" placeholder="Which Space Station Are You From?" required>
+            <input type="text" id="space_station" name="space_station" placeholder="Which Space Station Are You From?"
+                required>
 
             <input type="submit" value="Register">
         </form>
+        {% if message %}
+        <p>{{ message }}</p>
+        {% endif %}
     </div>
 </body>
 
