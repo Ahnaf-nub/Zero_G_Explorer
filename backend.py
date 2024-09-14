@@ -49,26 +49,18 @@ def load_user(username: str):
         return user_data.data[0]  # Return the first result if user exists
     return None
 
-
-# Home page (protected by login)
-@app.get("/")
-def home_page(user=Depends(manager)):
-    if not user:
-        return RedirectResponse(url="/register")  # Redirect to register if user not authenticated
-
-    return templates.TemplateResponse("game.html", {"request": Request, "username": user['username']})
-
-
-# Display registration form
-@app.get("/register")
-def show_registration_form(request: Request, user=Depends(manager)):
-    if user:
-        return RedirectResponse(url="/")  # Redirect to game if user is already logged in
-    return templates.TemplateResponse("register.html", {"request": request})
-
+def get_userC(request):
+    tokn = request.cookies.get("auth")
+    if(not tokn):
+        return False
+    try:
+        user = manager.get_user(tokn)
+        return user
+    except:
+        return False
 
 # Handle user registration
-@app.post("/register")
+@app.post("/auth/register")
 def register_user(username: str = Form(...), password: str = Form(...), space_station: str = Form(...)):
     user_exists = supabase.table("users").select("*").eq("username", username).execute()
     if user_exists.data:
@@ -114,10 +106,26 @@ def login_user(response: Response, username: str = Form(...), password: str = Fo
     print("Login successful!")
     return RedirectResponse(url="/", status_code=302)
 
+# Home page (protected by login)
+@app.get("/")
+def home_page(request: Request):
+    user = get_userC(request)
+    if not user:
+        return RedirectResponse(url="/login")  # Redirect to register if user not authenticated
+
+    return templates.TemplateResponse("game.html", {"request": request, "username": user['username']})
+
+
+# Display registration form
+@app.get("/register")
+def show_registration_form(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
 
 # Display login form
 @app.get("/login")
-def show_login_form(request: Request, user=Depends(manager)):
+def show_login_form(request: Request):
+    user = get_userC(request)
     if user:
         return RedirectResponse(url="/")  # Redirect to game if user is already logged in
     return templates.TemplateResponse("login.html", {"request": request})
