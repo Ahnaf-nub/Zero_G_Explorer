@@ -4,20 +4,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="/static/lib/p5.js"></script>
-  <script src="/static/lib/p5.sound.min.js"></script>
-  <script src="/static/lib/matter.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="/static/style/game.css">
+  <script src="{{ url_for('static', filename='lib/p5.js') }}"></script>
+  <script src="{{ url_for('static', filename='lib/p5.sound.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='lib/matter.min.js') }}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/game.css') }}">
+
+  <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/objects.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/astronaut.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/targets.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/util.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
 </head>
 
 <body>
-  <script src="/static/js/game.js"></script>
-  <script src="/static/js/objects.js"></script>
-  <script src="/static/js/astronaut.js"></script>
-  <script src="/static/js/targets.js"></script>
-  <script src="/static/js/util.js"></script>
-  <script src="/static/js/timer.js"></script>
-  <script src="/static/js/particles.js"></script>
+  
 </body>
 
 </html>
