@@ -24,9 +24,11 @@
 
             <input type="submit" value="Register">
         </form>
-        {% if message %}
-        <p>{{ message }}</p>
-        {% endif %}
+        <div class = "message"> &nbsp;
+            {% if error %}
+                <span>{{ error }}</span>
+            {% endif %} &nbsp;
+        </div> 
         <div class="register-link">
             <p>Already have an account? <a href="/login">Login now!</a></p>
         </div>

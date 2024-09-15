@@ -54,10 +54,10 @@ input[type="submit"] {
     border: none;
     color: #000;
     font-weight: bold;
-    border-radius: 10px;
+    border-radius: 2rem;
     cursor: pointer;
     transition: background-color 0.5s, transform 0.5s;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     font-family: "Courier New", Courier, monospace;
 }
 
@@ -66,8 +66,14 @@ input[type="submit"]:hover {
 }
 
 .register-link {
-    margin-top: 15px;
+    margin-top: 0rem;
     text-align: center;
+}
+
+.message{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #fb619c;
 }
 
 .register-link a {

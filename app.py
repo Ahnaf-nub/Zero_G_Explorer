@@ -60,6 +60,8 @@ def verify_token(token: str):
 async def get_current_user(request: Request):
     token = request.cookies.get("token")
     if token is None:
+        print("Hello1")
+        return None
         raise HTTPException(status_code=401, detail="Not authenticated")
     return verify_token(token)
 
@@ -91,7 +93,14 @@ async def login_page(request: Request):
 # Login POST handler
 @app.post("/login", response_class=HTMLResponse)
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):
-    user_response = supabase.table("users").select("*").eq("username", username).single().execute()
+    query = supabase.table("users").select("*").eq("username", username)
+    
+    user_response = None
+
+    try:
+        user_response = query.single().execute()
+    except Exception as e:
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid username or password"})
 
     # Check if the user was found
     if not user_response.data:
@@ -138,13 +147,16 @@ async def register_post(request: Request, username: str = Form(...), password: s
 # Home page route (Protected)
 @app.get("/home", response_class=HTMLResponse)
 async def home_page(request: Request, current_user: TokenData = Depends(get_current_user)):
-    return templates.TemplateResponse("home.html", {"request": request, "username": current_user.username})
-
+    if(current_user):
+        return templates.TemplateResponse("home.html", {"request": request, "username": current_user.username})
+    return RedirectResponse(url="/login", status_code=302)
 
 # Game page route (Protected)
 @app.get("/game", response_class=HTMLResponse)
 async def game_page(request: Request, current_user: TokenData = Depends(get_current_user)):
-    return templates.TemplateResponse("game.html", {"request": request, "username": current_user.username})
+    if(current_user):
+        return templates.TemplateResponse("game.html", {"request": request, "username": current_user.username})
+    return RedirectResponse(url="/login", status_code=302)
 
 
 # Register page (Public, no authentication needed)
