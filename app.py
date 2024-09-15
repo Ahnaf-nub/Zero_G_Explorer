@@ -115,25 +115,23 @@ async def login(request: Request, username: str = Form(...), password: str = For
 async def register_post(request: Request, username: str = Form(...), password: str = Form(...), space_station: str = Form(...)):
     # Check if the username already exists
     user_response = supabase.table("users").select("*").eq("username", username).execute()
-
     # Check if the user already exists
     if user_response.data:
         return templates.TemplateResponse("register.html", {"request": request, "error": "Username already taken"})
 
     # Hash the password
     password_hash = hash_password(password)
-
     # Save the user in the database
     insert_response = supabase.table("users").insert({
         "username": username, 
         "password_hash": password_hash, 
         "space_station": space_station
     }).execute()
-
+    print(insert_response)
     # Handle possible errors during user insertion
-    if insert_response.status_code != 200:
+    if not insert_response:
         return templates.TemplateResponse("register.html", {"request": request, "error": "Registration failed. Please try again."})
-
+    print("Hello4")
     # Redirect to login page after successful registration
     return RedirectResponse(url="/login", status_code=302)
 
