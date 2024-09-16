@@ -53,6 +53,8 @@ def verify_token(token: str):
             raise HTTPException(status_code=401, detail="Invalid token")
         return TokenData(username=username)
     except JWTError:
+        print("JWTError")
+        return False
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
@@ -62,7 +64,6 @@ async def get_current_user(request: Request):
     if token is None:
         print("Hello1")
         return None
-        raise HTTPException(status_code=401, detail="Not authenticated")
     return verify_token(token)
 
 
@@ -83,8 +84,10 @@ async def login_page(request: Request):
     token = request.cookies.get("token")
     if token:
         try:
-            verify_token(token)  # If token is valid, redirect to game/home page
-            return RedirectResponse(url="/game", status_code=302)
+            print("Token from login page")
+            tokenValid = verify_token(token)  # If token is valid, redirect to game/home page
+            if(tokenValid):
+                return RedirectResponse(url="/game", status_code=302)
         except JWTError:
             pass  # If token is invalid, show the login form
     return templates.TemplateResponse("login.html", {"request": request})

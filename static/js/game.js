@@ -2,17 +2,18 @@
 
 
 
-const { Engine, World, Bodies, Body, Composite, Constraint, Events} = Matter;
+const { Engine, World, Bodies, Body, Composite, Constraint, Events, Svg} = Matter;
 
 let gDelta = 0;
+var inputH;
+var assets;
+var timer;
 
 let engine;
 let world;
 let objects = [];
-
 let particles = [];
-
-var timer;
+let astr;
 let hpAngle;
 
 const worldSizeA = [3, 3];
@@ -20,11 +21,17 @@ const worldSizeB = [2, 2];
 checkDist = [2000, 3000];
 
 let player, targetAngle=0;
-let deadBody = [];
+let deadBodies = [];
 let targetScaleValue = 1;
 let scaleValue = 1;
 
 let nextTarget, targetCount = 0, targetAmount = 10;
+
+function preload(){
+  assets = new AssetLoader(this);
+  assets.loadAssetSVGPath("astr_01B", "Astroids/astr_01_B.svg");
+  assets.loadAssetSVG("astr_01", "Astroids/astr_01.svg");
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -34,9 +41,11 @@ function setup() {
   world = engine.world;
   Matter.Runner.run(engine);
   timer = new Timer(this)
+  inputH = new InputHandler(InputHandler.MAXIMUM);
+  inputH.axisYKeys = [[40, 83], [32, 38, 87]];
   hpAngle = PI/6;
   enableCollisionEvents(engine);
-  
+
   player = new Astronaut(0, 0);  
 
   nextTarget = new Target(0, 0);
@@ -86,8 +95,8 @@ function draw() {
     obj.show();
   }
 
-  for(let i=deadBody.length-1; i>=0; i--){
-    let bdy = deadBody[i];
+  for(let i=deadBodies.length-1; i>=0; i--){
+    let bdy = deadBodies[i];
     if(dist(player.x, player.y, bdy.x, bdy.y) < 3000){
       bdy.show();
       bdy.update();
@@ -96,6 +105,11 @@ function draw() {
 
   player.show();
   player.update(targetAngle);
+
+  fill(255);
+  imageMode(CENTER);
+  //drawShapeP(assets.getAsset("astr_01B"));
+  image(assets.getAsset("astr_01"), 0, 0, 1000, 1000);
 
   if(nextTarget){
     noFill();
@@ -122,7 +136,7 @@ function draw() {
     if(timer.isOver("dead")){
       let dedB = new Astronaut(player.body.position.x, player.body.position.y, true);
       dedB.hp = 0; dedB.die();
-      deadBody.push(dedB);
+      deadBodies.push(dedB);
       player.remove();
       player = new Astronaut(nextTarget.lastT.x, nextTarget.lastT.y);
       targetAngle = moduloAng(targetAngle);
@@ -135,20 +149,10 @@ function draw() {
 
 
 function handleInput(){
-  if(keyIsDown(32)){
-    player.thrust(1);
-  }else if(keyIsDown(DOWN_ARROW)){
-    player.thrust(-0.5);
-  }
-  else{
-    player.thrust(0);
-  }
-  if(keyIsDown(LEFT_ARROW)){
-    targetAngle -= 0.1;
-  }
-  if(keyIsDown(RIGHT_ARROW)){
-    targetAngle += 0.1;
-  }
+  let thrust = inputH.checkInput("axisY");
+  if(thrust < 0) thrust *= 0.5;
+  player.thrust(thrust);
+  targetAngle += inputH.checkInput("axisX") * 0.1;
 }
 
 function enableCollisionEvents(_engine){

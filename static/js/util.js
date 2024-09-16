@@ -47,6 +47,9 @@ function impulseForce(collision){
 }
 
 function drawShapeP(verts) {
+    if(!verts)
+        return;
+    
     beginShape();
     for (let i = 0; i < verts.length; i++) {
       let vert = verts[i];

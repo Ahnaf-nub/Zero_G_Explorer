@@ -36,7 +36,8 @@ class Target{
         for(let i = 0; i<objs.length; i++){
             let object = objs[i];
             if(dist(this.x, this.y, object.x, object.y) < this.rd*1.5){
-                object.attract(this.x, this.y, -0.05*object.body.mass);
+                let dir = {x: this.x - object.x, y: this.y - object.y};
+                Body.setPosition(object.body, vecScale(normalize(dir), this.rd*1.5));
             }
         }
     }
