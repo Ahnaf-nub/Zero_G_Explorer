@@ -3,15 +3,14 @@ class AssetLoader{
         this.assets = {};
     }
 
-    setAll(){
-        for(let assetName in this.assets){
-            let tp = this.assets[assetName]._type;
-            if(tp == "svg"){
-                this.assets[assetName].asset = this.assets[assetName].asset.toImage(1000, 1000);
+    allLoaded(lst){
+        for(let i=0; i<lst.length; i++){
+            if(!this.getAsset(lst[i])){
+                return lst[i];
             }
         }
+        return true;
     }
-
     loadAssetImage(name, path){
         this.assets[name] = {
             asset: loadImage(`static/assets/${path}`),
@@ -21,7 +20,7 @@ class AssetLoader{
 
     async loadAssetSVG(name, path){
         let svg = new SVG(window, `static/assets/${path}`)
-        //console.log(svg);
+        console.log(name);
         this.assets[name] = {
             asset: svg,
             _type: "svg"
@@ -34,23 +33,36 @@ class AssetLoader{
             asset: p,
             _type: "path"
         }
+        return true;
     }
 
     getAsset(assetName){
         if(this.assets[assetName]){
-            return this.assets[assetName].asset;
+            if(this.assets[assetName].asset){
+                if(this.assets[assetName]._type == "path"){
+                    let path = [];
+                    for(let i=0; i<this.assets[assetName].asset.length; i++){
+                        path.push({
+                            x: this.assets[assetName].asset[i].x,
+                            y: this.assets[assetName].asset[i].y
+                        });
+                    }
+                    return path;
+                }
+                return this.assets[assetName].asset;
+            }
         }
         else{
-            console.error(`Asset ${assetName} not found`);
             return false;
         }
+        return false;
     }
 }
 
 
 
 function getVerticesFromSvgPath(pathData) {
-    const path = Matter.Svg.pathToVertices(pathData, 100);
+    const path = Matter.Svg.pathToVertices(pathData);    
     return path;
 }
 
@@ -63,7 +75,6 @@ async function loadSvgAndCreateVerts(svgUrl) {
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
         const pathElement = svgDoc.querySelector('path');
-        console.log(pathElement);
 
         if (!pathElement) {
             throw new Error('No <path> element found in SVG');
@@ -72,17 +83,14 @@ async function loadSvgAndCreateVerts(svgUrl) {
         const pathData = pathElement.getAttribute('d');
 
         // Get vertices from SVG path data
-        const vertices = getVerticesFromSvgPath(pathElement);
-        return vertices;
-        // Create a Matter.js body from vertices
-        const body = Bodies.fromVertices(400, 300, [vertices], {
-            render: {
-                fillStyle: 'blue'
-            }
+        let vertices = getVerticesFromSvgPath(pathElement);
+        vertices = vertices.filter((vertex, index) => {
+            const prevVertex = vertices[index - 1];
+            let dupl = false;
+            if(prevVertex) dupl = (Math.abs(vertex.x - prevVertex.x) > 5 || Math.abs(vertex.y - prevVertex.y) > 5);
+            return dupl;
         });
-
-        // Add the body to the world
-        World.add(world, body);
+        return vertices;
     } catch (error) {
         console.error('Error loading SVG:', error);
     }

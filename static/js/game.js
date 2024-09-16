@@ -2,7 +2,7 @@
 
 
 
-const { Engine, World, Bodies, Body, Composite, Constraint, Events, Svg} = Matter;
+const { Engine, World, Bodies, Body, Composite, Common, Constraint, Events, Svg, Vertices} = Matter;
 
 let gDelta = 0;
 var inputH;
@@ -13,8 +13,9 @@ let engine;
 let world;
 let objects = [];
 let particles = [];
-let astr;
-let hpAngle;
+
+let off = {x: 0, y: 0};
+
 
 const worldSizeA = [3, 3];
 const worldSizeB = [2, 2];
@@ -27,26 +28,47 @@ let scaleValue = 1;
 
 let nextTarget, targetCount = 0, targetAmount = 10;
 
-function preload(){
+let assetList = ["astr_01", "astr_02", "astr_03", "astr_01R", "astr_02R", "astr_03R", "astr_01B", "astr_02B", "astr_03B"];
+let loadedAll = false;
+let setupFinished = false;
+async function preload(){
   assets = new AssetLoader(this);
-  assets.loadAssetSVGPath("astr_01B", "Astroids/astr_01_B.svg");
-  assets.loadAssetSVG("astr_01", "Astroids/astr_01.svg");
+  await assets.loadAssetSVGPath("astr_01B", "Astroids/astr_01_B.svg");
+  await assets.loadAssetSVGPath("astr_02B", "Astroids/astr_02_B.svg");
+  await assets.loadAssetSVGPath("astr_03B", "Astroids/astr_03_B.svg");
+  await assets.loadAssetSVG("astr_01", "Astroids/astr_01.svg");
+  await assets.loadAssetSVG("astr_02", "Astroids/astr_02.svg");
+  await assets.loadAssetSVG("astr_03", "Astroids/astr_03.svg");
+  await assets.loadAssetSVG("astr_01R", "Astroids/astr_01_R.svg");
+  await assets.loadAssetSVG("astr_02R", "Astroids/astr_02_R.svg");
+  await assets.loadAssetSVG("astr_03R", "Astroids/astr_03_R.svg");
+  loadedAll = true;
 }
 
-function setup() {
+async function setup() {
   createCanvas(windowWidth, windowHeight);
-  
+  let count_retry = 0;
+  while(count_retry < 200 || !loadedAll){
+    let loaded = assets.allLoaded(assetList);
+    console.error(`Not Loaded: ${loaded}`);
+    if(loadedAll){
+      console.log("All assets loaded");
+      break;
+    }
+    count_retry++;
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
   engine = Engine.create();
   engine.gravity = {x:0, y:0}
   world = engine.world;
-  Matter.Runner.run(engine);
   timer = new Timer(this)
   inputH = new InputHandler(InputHandler.MAXIMUM);
   inputH.axisYKeys = [[40, 83], [32, 38, 87]];
-  hpAngle = PI/6;
+  // Common.setDecomp(decomp);
   enableCollisionEvents(engine);
 
-  player = new Astronaut(0, 0);  
+  player = new Astronaut(0, 1000);
 
   nextTarget = new Target(0, 0);
   nextTarget = nextTarget.nexT(nextTarget, checkDist[0], checkDist[1]);
@@ -55,24 +77,42 @@ function setup() {
     let posx = random(-width*worldSizeA[0], width*worldSizeA[0]);
     let posy = random(-height*worldSizeA[1], height*worldSizeA[1]);
     if(dist(posx, posy, 0, 0) > 400){
-      let w = minimumRand(50, 500, 2);
-      let h = minimumRand(50, 500, 2);
-      objects.push(new Obstacle(posx, posy, max(w, h), min(w,h)) );
+      if(i < 10){
+        let s = minimumRand(5, 12, 4);
+        objects.push(new Obstacle2(posx, posy, s));
+      }
+      else if(i < 35){
+        let s = minimumRand(1, 5, 4);
+        objects.push(new Obstacle2(posx, posy, s));
+      }
+      else{
+        let w = int(random(1, 4)) * 100;
+        let h = int(random(1, 4)) * 100;
+        objects.push(new Obstacle(posx, posy, max(w, h), min(w, h)));
+      }
     }
     else{
       i--;
     }
   }
+  
 
   for(let i=0; i<100; i++){
     let posx = random(-width*worldSizeB[0], width*worldSizeB[0]);
     let posy = random(-height*worldSizeB[1], height*worldSizeB[1]);
     particles.push(new Particle(posx, posy));
   }
+
+  
+  Matter.Runner.run(engine);
+  setupFinished = true;
 }
 
 function draw() {
-  if(frameRate()!=0) gDelta = 1/frameRate();
+  if(!setupFinished) return;
+  if(frameRate()!=0){
+    gDelta = 1/frameRate();
+  }
   push();
   scaleValue = constrain(lerp(scaleValue, targetScaleValue * map(player.getSpdP(), 0, 1, 1, 0.5), 0.05), targetScaleValue/2, targetScaleValue);
   scale(scaleValue);
@@ -106,10 +146,16 @@ function draw() {
   player.show();
   player.update(targetAngle);
 
-  fill(255);
+  /*fill(255);
+  push();
+  translate(astr.position.x, astr.position.y);
+  rotate(astr.angle);
   imageMode(CENTER);
-  //drawShapeP(assets.getAsset("astr_01B"));
-  image(assets.getAsset("astr_01"), 0, 0, 1000, 1000);
+  image(assets.getAsset("astr_01"), off.x, off.y, 1000, 1000);
+  pop();
+  noFill();
+  stroke(255);
+  drawShapeP(astr.vertices);*/
 
   if(nextTarget){
     noFill();
