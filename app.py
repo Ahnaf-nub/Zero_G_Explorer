@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 import os
 import bcrypt
+import requests
 
 load_dotenv()
 
@@ -17,6 +18,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+EONET_API = os.getenv("NASA_API_KEY")
 
 # Initialize Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -60,7 +62,6 @@ def verify_token(token: str):
 async def get_current_user(request: Request):
     token = request.cookies.get("token")
     if token is None:
-        print("Hello1")
         return None
         raise HTTPException(status_code=401, detail="Not authenticated")
     return verify_token(token)
@@ -114,7 +115,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
 
     # Create JWT token after successful login
     access_token = create_access_token(data={"sub": username}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    response = RedirectResponse(url="/game", status_code=302)
+    response = RedirectResponse(url="/home", status_code=302)
     response.set_cookie(key="token", value=access_token)
     return response
 
@@ -140,8 +141,6 @@ async def register_post(request: Request, username: str = Form(...), password: s
     # Handle possible errors during user insertion
     if not insert_response:
         return templates.TemplateResponse("register.html", {"request": request, "error": "Registration failed. Please try again."})
-    print("Hello4")
-    # Redirect to login page after successful registration
     return RedirectResponse(url="/login", status_code=302)
 
 # Home page route (Protected)
@@ -158,18 +157,85 @@ async def game_page(request: Request, current_user: TokenData = Depends(get_curr
         return templates.TemplateResponse("game.html", {"request": request, "username": current_user.username})
     return RedirectResponse(url="/login", status_code=302)
 
-
-# Register page (Public, no authentication needed)
 @app.get("/register", response_class=HTMLResponse)
 async def register_get(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
-# Root URL redirects to the login page
 @app.get("/", response_class=HTMLResponse)
 async def root_redirect():
     return RedirectResponse(url="/login", status_code=302)
 
+@app.get("/eonet")
+async def fetch_eonet_events():
+    try:
+        start_date = (datetime.utcnow() - timedelta(days=2)).strftime('%Y-%m-%d')
+        eonet_url = f"https://eonet.gsfc.nasa.gov/api/v3/events?start={start_date}&api_key={EONET_API}"
+        response = requests.get(eonet_url)
+        response.raise_for_status() 
+        events_data = response.json()
 
+        for event in events_data['events']:
+            event_id = event['id']
+
+            existing_event = supabase.table('eonet').select('event_id').eq('event_id', event_id).execute()
+            if existing_event.data:
+                print(f"Event with ID {event_id} already exists, skipping...")
+                continue 
+
+            data = {
+                "event_id": event_id,
+                "title": event['title']
+            }
+            insert_response = supabase.table('eonet').insert(data).execute()
+
+            if insert_response.error:
+                raise HTTPException(status_code=500, detail="Failed to store event in Supabase")
+            else:
+                return {"message": "Events fetched and stored successfully", "events_count": len(events_data['events'])}
+
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching data from NASA EONET API: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/donki")
+async def fetch_donki_events():
+    try:
+        # Calculate the start date (2 days ago)
+        start_date = (datetime.utcnow() - timedelta(days=2)).strftime('%Y-%m-%d')
+        donki_url = f"https://api.nasa.gov/DONKI/notifications?startDate=2024-09-01&endDate=2024-09-08&type=all&api_key={EONET_API}"
+        response = requests.get(donki_url)
+        response.raise_for_status() 
+        events_data = response.json()
+
+        for event in events_data:
+            event_id = event['messageID']
+
+            # Check if the event with the same event_id already exists
+            existing_event = supabase.table('donki').select('event_id').eq('event_id', event_id).execute()
+            if existing_event.data:
+                print(f"Event with ID {event_id} already exists, skipping...")
+                continue
+
+            data = {
+                "event_id": event_id,
+                "message": event['messageBody']
+            }
+
+            # Insert the event into Supabase storage
+            insert_response = supabase.table('donki').insert(data).execute()
+
+            if insert_response.error:
+                raise HTTPException(status_code=500, detail="Failed to store event in Supabase")
+            else:
+                return {"message": "Events fetched and stored successfully", "events_count": len(events_data)}
+
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching data from NASA DONKI API: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    
 @app.get("/logout")
 async def logout():
     response = RedirectResponse(url="/login", status_code=302)

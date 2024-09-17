@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>Profile</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,11 +23,29 @@
             color: #007bff;
             text-decoration: none;
         }
+        
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px;
+        }
+        
+        .button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Welcome to your Space Station, {{ username }}!</h1>
     <p>You are successfully logged in.</p>
-    <a href="/logout">Logout</a>
+    <a href="/logout" class="button">Logout</a>
+    <h1>Play The Game</h1>
+    <a href="/game" class="button">Play</a>
+    <h1>Your Score</h1>
+    <p>{{ score }}</p>
 </body>
 </html>
