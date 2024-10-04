@@ -27,6 +27,9 @@ let scaleValue = 1;
 
 let nextTarget, targetCount = 0, targetAmount = 10;
 
+let timeFlight = 0;
+let qScore = 0;
+
 let assetList = ["astr_01", "astr_02", "astr_03", "astr_01R", "astr_02R", "astr_03R", "astr_01B", "astr_02B", "astr_03B"];
 let loadedAll = false;
 let setupFinished = false;
@@ -75,7 +78,7 @@ async function setup() {
   for(let i=0; i<50; i++){
     let posx = random(-width*worldSizeA[0], width*worldSizeA[0]);
     let posy = random(-height*worldSizeA[1], height*worldSizeA[1]);
-    if(dist(posx, posy, 0, 0) > 800){
+    if(dist(posx, posy, 0, 0) > 1200){
       if(i < 6){
         let s = minimumRand(5, 12, 4);
         objects.push(new Obstacle2(posx, posy, s));
@@ -111,6 +114,11 @@ async function setup() {
 
 function draw() {
   if(!setupFinished) return;
+
+  if(!timer.exists("timeOfFlight")){
+    timer.setTimer("timeOfFlight");
+  }
+
   if(frameRate()!=0){
     gDelta = 1/frameRate();
   }
@@ -148,10 +156,18 @@ function draw() {
   player.update(targetAngle);
 
   if(nextTarget){
-    noFill();
-    stroke(255, 100, 100);
-    strokeWeight(2/scaleValue);
-    arc(player.x, player.y, 300, 300, nextTarget.getAng(player.body)-PI/6, nextTarget.getAng(player.body)+PI/6);
+    if(!player.frozen){
+      push();
+        noFill();
+        stroke(255, 100, 100);
+        strokeWeight(2/scaleValue);
+        drawingContext.shadowOffsetX = 0;
+        drawingContext.shadowOffsetY = 0;
+        drawingContext.shadowBlur = 5;
+        drawingContext.shadowColor = color(255, 100, 100);
+        arc(player.x, player.y, 300, 300, nextTarget.getAng(player.body)-PI/6, nextTarget.getAng(player.body)+PI/6);
+      pop();
+    }
     if(nextTarget.isIn(player)){
       targetCount++;
       if(targetCount >= targetAmount) nextTarget = null; 

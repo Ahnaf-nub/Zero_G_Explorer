@@ -48,6 +48,7 @@ class Target{
         else if(dist(this.x, this.y, astron.x, astron.y) < this.rd*1.5){
             astron.freeze();
             this.filled = true;
+            tOf(true);
             return false;
         }
         if(this.filled && !astron.frozen){

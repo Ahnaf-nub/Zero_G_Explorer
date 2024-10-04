@@ -132,3 +132,13 @@ async function getAPI(url){
     resp = await resp.json();
     return resp;
 }
+
+function tOf(_pause){
+    if(_pause && !timer.exists("tofPause")){
+        timer.setTimer("tofPause");
+    }
+    else{
+        timer.updateTimer("timeOfFlight", timer.getTimer("tofPause"));
+        timer.removeTimer("tofPause");
+    }
+}

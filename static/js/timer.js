@@ -7,6 +7,12 @@ class Timer{
         this.timers[name] = {t0: millis(), dur};
     }
 
+    updateTimer(name, dur = 0){
+        if(this.timers[name]){
+            this.timers[name].t0 += dur;
+        }
+    }
+
     getTimer(name){
         if(this.timers[name])
             return millis() - this.timers[name].t0;

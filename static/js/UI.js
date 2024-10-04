@@ -31,6 +31,7 @@ class QuizMenu{
             drawingContext.shadowOffsetY = 0;
             drawingContext.shadowBlur = 5;
             drawingContext.shadowColor = color(0, 255, 255);
+            drawingContext.lineDashOffset = Math.sin(millis()/5000)*ps(10);
             drawingContext.setLineDash([ps(5), ps(20)]);
             rect(px(50), py(50), ps(94), ps(94), ps(7));
             pop();
@@ -70,7 +71,8 @@ class QuizMenu{
             drawingContext.shadowOffsetY = 0;
             drawingContext.shadowBlur = 5;
             drawingContext.shadowColor = (this.corr)? color(0, 255, 150) : color(255, 0, 255);
-            drawingContext.setLineDash([ps(20), ps(5)]);
+            drawingContext.lineDashOffset = Math.sin(millis()/5000)*ps(10);
+            drawingContext.setLineDash([ps(2), ps(2), ps(5), ps(2), ps(2), ps(20)]);
             rect(px(50), py(50), ps(94), ps(94), ps(7));
             pop();
 
@@ -108,7 +110,7 @@ class QuizMenu{
         if(sel && !timer.exists("ansShow")){
             let _corr = await getAPI(`quiz/${this.qz.id}/${this.selected}`);
             this.corr = _corr["correct"];
-            timer.setTimer("ansShow", 2000);
+            timer.setTimer("ansShow", 3000);
         }
 
 
@@ -117,6 +119,7 @@ class QuizMenu{
             player.unFreeze();
             timer.removeTimer("ansShow");
             this.corr = false;
+            tOf(false);
         }
     }
 }
