@@ -9,7 +9,7 @@ class InputHandler {
         this.axisX = 0;
         this.axisXKeys = [[37, 65], [39, 68]]
         this.axisY = 0;
-        this.axisYKeys = [[38, 87], [40, 83]]
+        this.axisYKeys = [[40, 83], [38, 87]]
         this.axisZ = 0;
         this.axisZKeys = [[81], [69]]
 
@@ -18,12 +18,14 @@ class InputHandler {
         this.mixType = mixType;
     }
 
-    bindButtonGamepad(name, buttonIndex){
-        buttons[name][buttonIndex] = buttonIndex;
+    bindButtonGamepad(name, _buttonIndex){
+        if(!this.buttons[name]) this.buttons[name] = {};
+        this.buttons[name]["buttonIndex"] = _buttonIndex;
     }
 
-    bindButtonKeyboard(name, key){
-        buttons[name][key] = key;
+    bindButtonKeyboard(name, _key){
+        if(!this.buttons[name]) this.buttons[name] = {};
+        this.buttons[name]["key"] = _key;
     }
 
     getAxisX(){
@@ -53,6 +55,7 @@ class InputHandler {
                 }
             }
         }
+        return false;
     }
 
 

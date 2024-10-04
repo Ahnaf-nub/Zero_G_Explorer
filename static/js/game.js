@@ -8,14 +8,13 @@ let gDelta = 0;
 var inputH;
 var assets;
 var timer;
+var qMenu;
+let qThis;
 
-let engine;
-let world;
+var engine;
+var world;
 let objects = [];
 let particles = [];
-
-let off = {x: 0, y: 0};
-
 
 const worldSizeA = [3, 3];
 const worldSizeB = [2, 2];
@@ -64,8 +63,8 @@ async function setup() {
   world = engine.world;
   timer = new Timer(this)
   inputH = new InputHandler(InputHandler.MAXIMUM);
-  inputH.axisYKeys = [[40, 83], [32, 38, 87]];
-  // Common.setDecomp(decomp);
+  inputH.bindButtonKeyboard("select", 32);
+  Common.setDecomp(decomp);
   enableCollisionEvents(engine);
 
   player = new Astronaut(0, 1000);
@@ -76,8 +75,8 @@ async function setup() {
   for(let i=0; i<50; i++){
     let posx = random(-width*worldSizeA[0], width*worldSizeA[0]);
     let posy = random(-height*worldSizeA[1], height*worldSizeA[1]);
-    if(dist(posx, posy, 0, 0) > 400){
-      if(i < 10){
+    if(dist(posx, posy, 0, 0) > 800){
+      if(i < 6){
         let s = minimumRand(5, 12, 4);
         objects.push(new Obstacle2(posx, posy, s));
       }
@@ -106,6 +105,8 @@ async function setup() {
   
   Matter.Runner.run(engine);
   setupFinished = true;
+
+  qMenu = new QuizMenu();
 }
 
 function draw() {
@@ -146,27 +147,20 @@ function draw() {
   player.show();
   player.update(targetAngle);
 
-  /*fill(255);
-  push();
-  translate(astr.position.x, astr.position.y);
-  rotate(astr.angle);
-  imageMode(CENTER);
-  image(assets.getAsset("astr_01"), off.x, off.y, 1000, 1000);
-  pop();
-  noFill();
-  stroke(255);
-  drawShapeP(astr.vertices);*/
-
   if(nextTarget){
     noFill();
     stroke(255, 100, 100);
     strokeWeight(2/scaleValue);
     arc(player.x, player.y, 300, 300, nextTarget.getAng(player.body)-PI/6, nextTarget.getAng(player.body)+PI/6);
-    nextTarget.update(objects);
     if(nextTarget.isIn(player)){
       targetCount++;
       if(targetCount >= targetAmount) nextTarget = null; 
-      else nextTarget = nextTarget.nexT(nextTarget, checkDist[0], checkDist[1]);
+      else {
+        nextTarget = nextTarget.nexT(nextTarget, checkDist[0], checkDist[1]);
+        nextTarget.update(objects);
+        qMenu.getQuiz();
+      }
+
     }
   }
 
@@ -190,7 +184,7 @@ function draw() {
     }
   }
 
-  
+  uiHandling();
 }
 
 
@@ -199,6 +193,16 @@ function handleInput(){
   if(thrust < 0) thrust *= 0.5;
   player.thrust(thrust);
   targetAngle += inputH.checkInput("axisX") * 0.1;
+}
+
+function uiHandling(){
+  if(qMenu){
+    if(qMenu.qz){
+      qMenu.show();
+      qMenu.update(-1*inputH.checkInput("axisY"), inputH.getButton("select"));
+      player.freeze();
+    }
+  }
 }
 
 function enableCollisionEvents(_engine){

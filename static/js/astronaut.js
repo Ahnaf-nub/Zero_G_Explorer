@@ -361,6 +361,11 @@ class Astronaut {
     this.frozen = true;
   }
 
+  unFreeze(){
+    this.frozen = false;
+    timer.removeTimer("freeze");
+  }
+
   attract(x, y, _force=0.1, minRd = 10){
     let dir = {x: x - this.body.position.x, y: y - this.body.position.y};
     let mag = magnitude(dir);

@@ -9,3 +9,4 @@ bcrypt
 jinja2
 python-multipart
 python-jose
+requests

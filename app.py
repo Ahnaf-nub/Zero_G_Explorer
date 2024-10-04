@@ -9,7 +9,8 @@ from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 import os
 import bcrypt
-import requests
+
+import quiz
 
 load_dotenv()
 
@@ -18,7 +19,6 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-EONET_API = os.getenv("NASA_API_KEY")
 
 # Initialize Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -52,12 +52,12 @@ def verify_token(token: str):
         payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            return None
+            # raise HTTPException(status_code=401, detail="Invalid token")
         return TokenData(username=username)
     except JWTError:
         print("JWTError")
         return False
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 # Dependency to get current user based on token
@@ -67,6 +67,15 @@ async def get_current_user(request: Request):
         return None
     return verify_token(token)
 
+async def get_full_user_data(request: Request):
+    current_user = await get_current_user(request)
+    if current_user:
+        user_response = supabase.table("users").select("*").eq("username", current_user.username).execute()
+        if user_response.data:
+            user_data = user_response.data
+            print(user_data)
+            return user_data
+    return None
 
 # Hash a password
 def hash_password(password: str) -> str:
@@ -170,13 +179,8 @@ async def root_redirect():
 
 @app.get("/eonet")
 async def fetch_eonet_events():
-    try:
-        start_date = (datetime.utcnow() - timedelta(days=2)).strftime('%Y-%m-%d')
-        eonet_url = f"https://eonet.gsfc.nasa.gov/api/v3/events?start={start_date}&api_key={EONET_API}"
-        response = requests.get(eonet_url)
-        response.raise_for_status() 
-        events_data = response.json()
-
+    try:   
+        events_data = await quiz.getEONET()
         for event in events_data['events']:
             event_id = event['id']
 
@@ -191,26 +195,40 @@ async def fetch_eonet_events():
             }
             insert_response = supabase.table('eonet').insert(data).execute()
 
-            if insert_response.error:
-                raise HTTPException(status_code=500, detail="Failed to store event in Supabase")
-            else:
-                return {"message": "Events fetched and stored successfully", "events_count": len(events_data['events'])}
-
-    except requests.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching data from NASA EONET API: {str(e)}")
+            """if insert_response.error:
+                return {"error": "Failed to store data in supabase."}
+            else:"""
+            return {"message": "Events fetched and stored successfully", "events_count": len(events_data['events']), "data": events_data}
+            
+    except quiz.requests.RequestException as e:
+        return {"status_code":500, "detail":f"Error fetching data from NASA EONET API: {str(e)}"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+        return {"status_code":500, "detail":f"Unexpected error: {str(e)}"}
 
+
+@app.get("/quiz")
+async def get_quiz(request: Request):
+    userDat = await get_full_user_data(request)
+    usedQIDs = userDat[0]['usedQID']['qID']
+    newID, newQuiz = quiz.get_quiz_today(usedQIDs)
+    usedQIDs.append(newID)
+    try:
+        update_response = supabase.table("users").update({"usedQID": {"qID": usedQIDs}}).eq("username", userDat[0]['username']).execute()
+    except Exception as e:
+        print("error: Failed to update user data in supabase.")
+
+    return {"id": newID, "question": newQuiz['question'], "options": newQuiz['options']}
+
+@app.get("/quiz/{id:str}/{chosen:int}")
+async def check_quiz(request: Request, id: str, chosen: int):
+    corr = quiz.check_answer(id, chosen)
+    return {"correct": corr}
 
 @app.get("/donki")
 async def fetch_donki_events():
     try:
         # Calculate the start date (2 days ago)
-        start_date = (datetime.utcnow() - timedelta(days=2)).strftime('%Y-%m-%d')
-        donki_url = f"https://api.nasa.gov/DONKI/notifications?startDate=2024-09-01&endDate=2024-09-08&type=all&api_key={EONET_API}"
-        response = requests.get(donki_url)
-        response.raise_for_status() 
-        events_data = response.json()
+        events_data = await quiz.getDONKI()
 
         for event in events_data:
             event_id = event['messageID']
@@ -229,15 +247,12 @@ async def fetch_donki_events():
             # Insert the event into Supabase storage
             insert_response = supabase.table('donki').insert(data).execute()
 
-            if insert_response.error:
-                raise HTTPException(status_code=500, detail="Failed to store event in Supabase")
-            else:
-                return {"message": "Events fetched and stored successfully", "events_count": len(events_data)}
+            return {"message": "Events fetched and stored successfully", "events_count": len(events_data), "data": events_data}
 
-    except requests.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching data from NASA DONKI API: {str(e)}")
+    except quiz.requests.RequestException as e:
+        return {"status_code":500, "detail":f"Error fetching data from NASA DONKI API: {str(e)}"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+        return {"status_code":500, "detail":f"Unexpected error: {str(e)}"}
     
 @app.get("/logout")
 async def logout():

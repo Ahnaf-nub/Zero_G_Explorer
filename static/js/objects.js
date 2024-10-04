@@ -6,7 +6,7 @@ class Obstacle {
     this.h = h;
     let options = {
       friction: 0.3,
-      restitution: 0.6,
+      restitution: 0.2,
       frictionAir: 0,
       angle: random(TWO_PI)
     };

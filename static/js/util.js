@@ -125,3 +125,10 @@ function moduloAng(angle){
 function sc(v){
     return v * targetScaleValue;
 }
+
+
+async function getAPI(url){
+    let resp = await fetch(url);
+    resp = await resp.json();
+    return resp;
+}
