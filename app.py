@@ -265,7 +265,7 @@ async def update_score(request: Request):
     try:
         update_response = supabase.table("users").update({"score": {"scores": scores}}).eq("username", userDat[0]['username']).execute()
         supabase.table("Scores").insert({
-            "station": userDat[0]['space_station'],
+            "station": userDat[0]['station'],
             "player": userDat[0]['username'],
             "score": body['score'],
             "info": body
@@ -277,42 +277,23 @@ async def update_score(request: Request):
 
 @app.get("/score")
 async def get_score(request: Request):
-    userDat = await get_full_user_data(request)
-    if not userDat:
-        return {"personal_scores": [], "leaderboard": []}
-    
     try:
-        # Get user's personal scores from the Scores table
-        personal_scores_response = supabase.table("Scores")\
-            .select("score")\
-            .eq("player", userDat[0]['username'])\
-            .order("created_at", desc=True)\
-            .execute()
-        
-        personal_scores = [entry['score'] for entry in personal_scores_response.data] if personal_scores_response.data else []
-        
-        # Fetch leaderboard data
+        # Fetch leaderboard data without filtering unique users
         leaderboard_response = supabase.table("Scores")\
-            .select("player, score, space_station, created_at")\
+            .select("created_at, station, player, score")\
             .order("score", desc=True)\
             .limit(10)\
             .execute()
-        
-        # Get unique highest scores per player
-        seen_players = set()
-        leaderboard = []
-        for entry in leaderboard_response.data:
-            if entry['player'] not in seen_players:
-                leaderboard.append(entry)
-                seen_players.add(entry['player'])
-        
+
+        # Simply return the leaderboard without filtering
+        leaderboard = leaderboard_response.data if leaderboard_response.data else []
+
         return {
-            "personal_scores": personal_scores,
-            "leaderboard": leaderboard[:10]  # Ensure we only return top 10
+            "leaderboard": leaderboard  # Return top 10 leaderboard entries, even if from the same user
         }
     except Exception as e:
         print(f"Error fetching scores: {e}")
-    return {"personal_scores": [], "leaderboard": [], "error": str(e)}
+        return {"leaderboard": [], "error": str(e)}
 
 
 @app.get("/logout")
