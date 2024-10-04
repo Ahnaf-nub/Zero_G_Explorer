@@ -13,6 +13,7 @@ var eMenu;  //end menu
 
 let qThis;
 
+let gameRunning = true;
 var engine;
 var world;
 let objects = [];
@@ -176,6 +177,8 @@ function draw() {
       if(targetCount > targetAmount) {
         nextTarget = null;
         timeFlight = timer.getTimer("timeOfFlight");
+        eMenu.showing = true;
+        gameRunning = false;
         console.log(`Time of Flight: ${timeFlight}`);
       }
       else {
@@ -227,6 +230,11 @@ function uiHandling(){
       qMenu.show();
       qMenu.update(-1*inputH.checkInput("axisY"), inputH.getButton("select"));
     }
+  }
+
+  if(!gameRunning){
+    eMenu.show();
+    player.freeze();
   }
 }
 

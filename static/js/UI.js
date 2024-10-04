@@ -133,7 +133,7 @@ class EndMenu{
 
     show(){
         if(this.showing){
-            stroke(0, 255, 255);
+            stroke(255, 255, 0);
 
             push();
             strokeWeight(ps(0.5));
@@ -141,9 +141,9 @@ class EndMenu{
             drawingContext.shadowOffsetX = 0;
             drawingContext.shadowOffsetY = 0;
             drawingContext.shadowBlur = 5;
-            drawingContext.shadowColor = color(0, 255, 255);
+            drawingContext.shadowColor = color(255, 255, 0);
             drawingContext.lineDashOffset = Math.sin(millis()/5000)*ps(10);
-            drawingContext.setLineDash([ps(5), ps(20)]);
+            drawingContext.setLineDash([ps(5), ps(20), ps(2), ps(20)]);
             rect(px(50), py(50), ps(94), ps(94), ps(7));
             pop();
 
@@ -151,9 +151,9 @@ class EndMenu{
             fill(50, 170, 170, 200);
             rect(px(50), py(50), ps(90), ps(90), ps(5));
 
-            textSize(ps(5));
+            textSize(ps(8));
             fill(255, 255, 255);
-            text(this.qz.question, px(50), py(20), ps(80), ps(30));
+            text("Mission Complete!", px(50), py(20), ps(80), ps(30));
         }
     }
 }
