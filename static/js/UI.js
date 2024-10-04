@@ -1,8 +1,37 @@
+class HUDMenu{
+    constructor(){
+        this.showing = true;
+    }
+
+    show(){
+        if(this.showing){
+            rectMode(CORNER);
+            noStroke();
+            fill(0, 150);
+            rect(0, 0, width, ps(10));
+
+            fill(255);
+            textSize(ps(4));
+
+            textAlign(LEFT, CENTER);
+            text(targetCount+" / "+(targetAmount), ps(3), ps(5));
+
+            textAlign(RIGHT, CENTER);
+            text("Quiz: "+qScore, width-ps(3), ps(5));
+
+            textAlign(CENTER, CENTER);
+            text(tme(timer.getTimer("timeOfFlight")), width/2, ps(5));
+        }
+    }
+}
+
+
 class QuizMenu{
     constructor(qz=null){
         this.qz = qz;
         this.corr = false;
-        this.selected = 0;   
+        this.selected = 0; 
+        this.scored = false;  
     }
 
     async getQuiz(){
@@ -15,6 +44,7 @@ class QuizMenu{
             timer.setTimer("newQ", 2000);
             this.selected = 0;
             timer.removeTimer("ansShow", 2000);
+            this.scored = false;
         }
     }
     show(){
@@ -110,6 +140,11 @@ class QuizMenu{
         if(sel && !timer.exists("ansShow")){
             let _corr = await getAPI(`quiz/${this.qz.id}/${this.selected}`);
             this.corr = _corr["correct"];
+            if(!this.scored){
+                qScore += (this.corr)? 1000 : 0;
+                this.scored = true;
+            }
+
             timer.setTimer("ansShow", 3000);
         }
 
@@ -133,6 +168,8 @@ class EndMenu{
 
     show(){
         if(this.showing){
+            rectMode(CENTER);
+            textAlign(CENTER, CENTER);
             stroke(255, 255, 0);
 
             push();
@@ -153,7 +190,28 @@ class EndMenu{
 
             textSize(ps(8));
             fill(255, 255, 255);
-            text("Mission Complete!", px(50), py(20), ps(80), ps(30));
+            text("Mission Complete!", px(50), py(20));
+
+            fill(0, 100);
+            rect(px(50), py(35), ps(25), ps(10), ps(3));
+            fill(255);
+            textSize(ps(5));
+            text(tme(timeFlight), px(50), py(35));
+
+            textSize(ps(4));
+            text("Quiz Score:", px(30), py(45));
+            textSize(ps(8));
+            text(qScore, px(30), py(51));
+
+            textSize(ps(4));
+            text("Time Score:", px(70), py(45));
+            textSize(ps(8));
+            text(tScore, px(70), py(51));
+
+            textSize(ps(5));
+            text("Total Score:", px(50), py(65));
+            textSize(ps(12));
+            text(qScore + tScore, px(50), py(75));
         }
     }
 }

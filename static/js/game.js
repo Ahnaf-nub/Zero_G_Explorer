@@ -10,15 +10,19 @@ var assets;
 var timer;
 var qMenu;  //quiz menu
 var eMenu;  //end menu
+var HUD;
 
 let qThis;
 
 let gameRunning = true;
+let scoreSubmitted = false;
+
 var engine;
 var world;
 let objects = [];
 let particles = [];
 
+let camPos = {x: 0, y: 0};
 const worldSizeA = [3, 3];
 const worldSizeB = [2, 2];
 checkDist = [2000, 3000];
@@ -32,6 +36,7 @@ let nextTarget, targetCount = 0, targetAmount = 10;
 
 let timeFlight = 0;
 let qScore = 0;
+let tScore = 0;
 
 let assetList = ["astr_01", "astr_02", "astr_03", "astr_01R", "astr_02R", "astr_03R", "astr_01B", "astr_02B", "astr_03B"];
 let loadedAll = false;
@@ -73,7 +78,7 @@ async function setup() {
   Common.setDecomp(decomp);
   enableCollisionEvents(engine);
 
-  player = new Astronaut(0, 1000);
+  player = new Astronaut(0, 0);
 
   nextTarget = new Target(0, 0);
   nextTarget = nextTarget.nexT(nextTarget, checkDist[0], checkDist[1]);
@@ -81,7 +86,7 @@ async function setup() {
   for(let i=0; i<50; i++){
     let posx = random(-width*worldSizeA[0], width*worldSizeA[0]);
     let posy = random(-height*worldSizeA[1], height*worldSizeA[1]);
-    if(dist(posx, posy, 0, 0) > 1200){
+    if(dist(posx, posy, 0, 0) > 1000){
       if(i < 6){
         let s = minimumRand(5, 12, 4);
         objects.push(new Obstacle2(posx, posy, s));
@@ -114,6 +119,7 @@ async function setup() {
 
   qMenu = new QuizMenu();
   eMenu = new EndMenu();
+  HUD = new HUDMenu();
 }
 
 function draw() {
@@ -129,13 +135,15 @@ function draw() {
   push();
   scaleValue = constrain(lerp(scaleValue, targetScaleValue * map(player.getSpdP(), 0, 1, 1, 0.5), 0.05), targetScaleValue/2, targetScaleValue);
   scale(scaleValue);
-  translate(width/(2*scaleValue) - player.body.position.x, height/(2*scaleValue) - player.body.position.y);
+  camPos.x = lerp(camPos.x, player.x, 10*gDelta);
+  camPos.y = lerp(camPos.y, player.y, 10*gDelta);
+  translate(width/(2*scaleValue) - camPos.x, height/(2*scaleValue) - camPos.y);
   background(51);
 
   for(let i=particles.length-1; i>=0; i--){
     let particle = particles[i];
     particle.show();
-    particle.outOfSight(player);
+    particle.outOfSight(camPos);
   }
 
   if(nextTarget){
@@ -144,7 +152,7 @@ function draw() {
 
   for(let i=objects.length-1; i>=0; i--){
     let obj = objects[i];
-    obj.outOfSight(player);
+    obj.outOfSight(camPos);
     obj.show();
   }
 
@@ -177,9 +185,9 @@ function draw() {
       if(targetCount > targetAmount) {
         nextTarget = null;
         timeFlight = timer.getTimer("timeOfFlight");
+        tScore = Math.max((targetAmount+1)*16000 - timeFlight, 0);
         eMenu.showing = true;
         gameRunning = false;
-        console.log(`Time of Flight: ${timeFlight}`);
       }
       else {
         nextTarget = nextTarget.nexT(nextTarget, checkDist[0], checkDist[1]);
@@ -224,6 +232,10 @@ function handleInput(){
 }
 
 function uiHandling(){
+  if(gameRunning){
+    HUD.show();
+  }
+
   if(qMenu){
     if(qMenu.qz){
       player.freeze();
@@ -233,6 +245,9 @@ function uiHandling(){
   }
 
   if(!gameRunning){
+    if(!scoreSubmitted){
+      submitScore();
+    }
     eMenu.show();
     player.freeze();
   }

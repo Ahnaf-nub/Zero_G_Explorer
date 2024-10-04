@@ -133,12 +133,47 @@ async function getAPI(url){
     return resp;
 }
 
+async function postAPI(url, data){
+    let resp = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+    resp = await resp.json();
+    return resp;
+}
+
+function submitScore(){
+    let data = {
+        score: qScore + tScore,
+        quiz: qScore,
+        tScore: tScore,
+        time: timeFlight
+    }
+    postAPI("/scoreUpdate", data);
+    scoreSubmitted = true;
+}
+
 function tOf(_pause){
     if(_pause && !timer.exists("tofPause")){
         timer.setTimer("tofPause");
+        HUD.showing = false;
     }
     else{
         timer.updateTimer("timeOfFlight", timer.getTimer("tofPause"));
         timer.removeTimer("tofPause");
+        HUD.showing = true;
     }
+}
+
+function tme(tm){
+    let sec = floor(tm/1000);
+    let min = floor(sec/60);
+    sec = sec % 60;
+    if(sec < 10){
+        sec = "0"+sec;
+    }
+    return min+":"+sec;
 }

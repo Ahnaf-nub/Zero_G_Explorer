@@ -73,7 +73,6 @@ async def get_full_user_data(request: Request):
         user_response = supabase.table("users").select("*").eq("username", current_user.username).execute()
         if user_response.data:
             user_data = user_response.data
-            print(user_data)
             return user_data
     return None
 
@@ -255,7 +254,27 @@ async def fetch_donki_events():
         return {"status_code":500, "detail":f"Error fetching data from NASA DONKI API: {str(e)}"}
     except Exception as e:
         return {"status_code":500, "detail":f"Unexpected error: {str(e)}"}
-    
+
+@app.post("/scoreUpdate")
+async def update_score(request: Request):
+    userDat = await get_full_user_data(request)
+    body = await request.json()
+    print(body)
+    scores = userDat[0]['score']['scores']
+    scores.append(body)
+    try:
+        update_response = supabase.table("users").update({"score": {"scores": scores}}).eq("username", userDat[0]['username']).execute()
+        supabase.table("Scores").insert({
+            "station": userDat[0]['space_station'],
+            "player": userDat[0]['username'],
+            "score": body['score'],
+            "info": body
+        }).execute()
+    except Exception as e:
+        print("error: Failed to update user data in supabase.")
+
+    return {"message": "Score updated successfully."}
+
 @app.get("/logout")
 async def logout():
     response = RedirectResponse(url="/login", status_code=302)
