@@ -13,12 +13,13 @@ class Target{
     }
 
     show(){
+        let colC = (targetCount < targetAmount)? color(60, 237, 47) : color(255, 100, 100);
         push();
         drawingContext.shadowOffsetX = 0;
         drawingContext.shadowOffsetY = 0;
         drawingContext.shadowBlur = 10;
-        drawingContext.shadowColor = color(60, 237, 47, 255);
-        stroke(60, 237, 47);
+        drawingContext.shadowColor = colC;
+        stroke(colC);
         noFill();
         for(let n = 1; n<=5; n++){
             strokeWeight(25/n);

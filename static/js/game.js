@@ -8,7 +8,9 @@ let gDelta = 0;
 var inputH;
 var assets;
 var timer;
-var qMenu;
+var qMenu;  //quiz menu
+var eMenu;  //end menu
+
 let qThis;
 
 var engine;
@@ -110,6 +112,7 @@ async function setup() {
   setupFinished = true;
 
   qMenu = new QuizMenu();
+  eMenu = new EndMenu();
 }
 
 function draw() {
@@ -170,11 +173,17 @@ function draw() {
     }
     if(nextTarget.isIn(player)){
       targetCount++;
-      if(targetCount >= targetAmount) nextTarget = null; 
+      if(targetCount > targetAmount) {
+        nextTarget = null;
+        timeFlight = timer.getTimer("timeOfFlight");
+        console.log(`Time of Flight: ${timeFlight}`);
+      }
       else {
         nextTarget = nextTarget.nexT(nextTarget, checkDist[0], checkDist[1]);
         nextTarget.update(objects);
-        qMenu.getQuiz();
+        if(targetCount <= targetAmount){
+          qMenu.getQuiz();
+        }
       }
 
     }

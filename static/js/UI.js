@@ -124,6 +124,41 @@ class QuizMenu{
     }
 }
 
+
+
+class EndMenu{
+    constructor(){
+        this.showing = false;
+    }
+
+    show(){
+        if(this.showing){
+            stroke(0, 255, 255);
+
+            push();
+            strokeWeight(ps(0.5));
+            noFill();
+            drawingContext.shadowOffsetX = 0;
+            drawingContext.shadowOffsetY = 0;
+            drawingContext.shadowBlur = 5;
+            drawingContext.shadowColor = color(0, 255, 255);
+            drawingContext.lineDashOffset = Math.sin(millis()/5000)*ps(10);
+            drawingContext.setLineDash([ps(5), ps(20)]);
+            rect(px(50), py(50), ps(94), ps(94), ps(7));
+            pop();
+
+            noStroke();
+            fill(50, 170, 170, 200);
+            rect(px(50), py(50), ps(90), ps(90), ps(5));
+
+            textSize(ps(5));
+            fill(255, 255, 255);
+            text(this.qz.question, px(50), py(20), ps(80), ps(30));
+        }
+    }
+}
+
+
 function px(x){
     let bgn = width/2 - Math.min(width, height)/2;
     let end = width/2 + Math.min(width, height)/2;
