@@ -3,25 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>Space Station Leaderboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #282c34;
             text-align: center;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
         }
         
         h1 {
             color: #61dafb;
-        }
-        
-        p {
-            color: #fff;
-        }
-        
-        a {
-            color: #007bff;
-            text-decoration: none;
+            margin-bottom: 30px;
         }
         
         .button {
@@ -32,20 +27,182 @@
             border-radius: 5px;
             text-decoration: none;
             margin: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
         
         .button:hover {
             background-color: #0056b3;
         }
+
+        .content-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .score-section, .leaderboard-section {
+            background-color: #363b44;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .score-item {
+            background-color: #2c3038;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #404756;
+        }
+
+        .leaderboard-table th {
+            background-color: #2c3038;
+            color: #61dafb;
+        }
+
+        .leaderboard-table tr:nth-child(even) {
+            background-color: #2c3038;
+        }
+
+        .leaderboard-table tr:hover {
+            background-color: #404756;
+        }
+
+        .rank-1 td:first-child { color: gold; font-weight: bold; }
+        .rank-2 td:first-child { color: silver; font-weight: bold; }
+        .rank-3 td:first-child { color: #cd7f32; font-weight: bold; }
+
+        .button-container {
+            margin-bottom: 20px;
+        }
+
+        .score-highlight {
+            color: #61dafb;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <h1>Welcome to your Space Station, {{ username }}!</h1>
-    <p>You are successfully logged in.</p>
-    <a href="/logout" class="button">Logout</a>
-    <h1>Play The Game</h1>
-    <a href="/game" class="button">Play</a>
-    <h1>Your Score</h1>
-    <p>{{ score }}</p>
+    
+    <div class="button-container">
+        <a href="/logout" class="button">Logout</a>
+        <a href="/game" class="button">Play Game</a>
+    </div>
+
+    <div class="content-container">
+        <div class="score-section">
+            <h2>Your Scores</h2>
+            <ul class="score-list" id="personal-scores">
+                <li class="score-item">Loading scores...</li>
+            </ul>
+        </div>
+
+        <div class="leaderboard-section">
+            <h2>Space Station Leaderboard</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Station</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <tr>
+                        <td colspan="4">Loading leaderboard...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAndDisplayScores() {
+            try {
+                const response = await fetch('/score');
+                const data = await response.json();
+
+                // Debug log
+                console.log('Received data:', data);
+
+                // Update personal scores
+                const personalScoresEl = document.getElementById('personal-scores');
+                if (data.personal_scores && data.personal_scores.length > 0) {
+                    personalScoresEl.innerHTML = data.personal_scores
+                        .map((score, index) => `
+                            <li class="score-item">
+                                <span class="score-highlight">Game ${data.personal_scores.length - index}:</span> 
+                                ${score} points
+                            </li>
+                        `)
+                        .join('');
+                } else {
+                    personalScoresEl.innerHTML = '<li class="score-item">No scores yet - start playing!</li>';
+                }
+
+                // Update leaderboard
+                const leaderboardEl = document.getElementById('leaderboard-body');
+                if (data.leaderboard && data.leaderboard.length > 0) {
+                    leaderboardEl.innerHTML = data.leaderboard
+                        .map((entry, index) => `
+                            <tr class="rank-${index + 1}">
+                                <td>#${index + 1}</td>
+                                <td>${entry.player}</td>
+                                <td>${entry.space_station}</td>
+                                <td>${entry.score}</td>
+                            </tr>
+                        `)
+                        .join('');
+                } else {
+                    leaderboardEl.innerHTML = '<tr><td colspan="4">No leaderboard data available</td></tr>';
+                }
+            } catch (error) {
+                console.error("Failed to fetch scores:", error);
+                document.getElementById('personal-scores').innerHTML = 
+                    '<li class="score-item">Failed to load scores</li>';
+                document.getElementById('leaderboard-body').innerHTML = 
+                    '<tr><td colspan="4">Failed to load leaderboard</td></tr>';
+            }
+        }
+
+        // Fetch scores when the page loads
+        window.onload = fetchAndDisplayScores;
+
+        // Refresh scores every 30 seconds
+        setInterval(fetchAndDisplayScores, 30000);
+    </script>
 </body>
 </html>

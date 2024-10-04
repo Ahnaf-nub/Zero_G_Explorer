@@ -73,7 +73,7 @@ The game tracks individual scores and ranks them on a global leaderboard. Space 
 
 3. Run the game locally:
    ```bash
-   uvicorn app:app --reload
+   python3 app.py
    ```
 
 ---
@@ -90,5 +90,3 @@ The game tracks individual scores and ranks them on a global leaderboard. Space 
 We hope **ZeroG-Explorer** brings both fun and learning to astronauts while helping them stay connected in the vastness of space! 🌍🚀
 
 ---
-
-This README now reflects the current setup of your project, including the technologies used and the updated gameplay mechanics. Let me know if anything else needs tweaking!
