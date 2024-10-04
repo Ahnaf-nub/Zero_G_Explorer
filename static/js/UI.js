@@ -7,7 +7,7 @@ class HUDMenu{
         if(this.showing){
             rectMode(CORNER);
             noStroke();
-            fill(0, 150);
+            fill(0, 50, 10, 150);
             rect(0, 0, width, ps(10));
 
             fill(255);

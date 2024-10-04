@@ -132,13 +132,14 @@ function draw() {
   if(frameRate()!=0){
     gDelta = 1/frameRate();
   }
+  background(10);
+
   push();
   scaleValue = constrain(lerp(scaleValue, targetScaleValue * map(player.getSpdP(), 0, 1, 1, 0.5), 0.05), targetScaleValue/2, targetScaleValue);
   scale(scaleValue);
   camPos.x = lerp(camPos.x, player.x, 10*gDelta);
   camPos.y = lerp(camPos.y, player.y, 10*gDelta);
   translate(width/(2*scaleValue) - camPos.x, height/(2*scaleValue) - camPos.y);
-  background(51);
 
   for(let i=particles.length-1; i>=0; i--){
     let particle = particles[i];
