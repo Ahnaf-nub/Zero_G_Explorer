@@ -69,26 +69,32 @@ class QuizMenu{
             noStroke();
             fill(50, 170, 170, 200);
             rect(px(50), py(50), ps(90), ps(90), ps(5));
-
-            textSize(ps(5));
+            
+            fill(0, 50);
+            rect(px(50), py(27.5), ps(85), ps(40), ps(2.5));
+            textSize(ps(4));
             fill(255, 255, 255);
-            text(this.qz.question, px(50), py(20), ps(80), ps(30));
+            text(this.qz.question, px(50), py(27.5), ps(80), ps(35));
 
             for(let i=0; i<this.qz.options.length; i++){
                 let opt = this.qz.options[i];
                 if(i == this.selected){
                     fill(0, 255, 100);
                     noStroke();
+                    rect(px(50), py(54 + i*10), ps(77), ps(10), ps(3));
+                    fill(0);
+                    textSize(ps(3));
+                    text(opt, px(50), py(54 + i*10));
                 }else{
                     noFill();
                     stroke(0, 255, 100);
                     strokeWeight(ps(0.5));
+                    rect(px(50), py(54 + i*10), ps(75), ps(8), ps(2));
+                    noStroke();
+                    fill(255);
+                    textSize(ps(3));
+                    text(opt, px(50), py(54 + i*10));
                 }
-                rect(px(50), py(46 + i*12), ps(75), ps(10), ps(2));
-                noStroke();
-                fill(255, 255, 255);
-                textSize(ps(3));
-                text(opt, px(50), py(46 + i*12), ps(80), ps(10));
             }
         }
         else{

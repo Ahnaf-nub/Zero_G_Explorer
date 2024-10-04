@@ -10,7 +10,7 @@ load_dotenv()
 NASA_API = os.getenv("NASA_API_KEY")
 
 
-quiz_today = {
+"""quiz_today = {
     "01":  {
         "question": "What is the capital of France?",
         "options": ["Paris", "London", "Berlin", "Madrid"],
@@ -110,6 +110,34 @@ quiz_today = {
         "question": "What is the capital of Pakistan?",
         "options": ["Paris", "London", "Berlin", "Islamabad"],
         "answer": 3
+    }
+}"""
+
+quiz_today = {
+    "H873": {
+        "question": "What type of CME was detected by STEREO A / SOHO on September 8th, 2024?",
+        "options": ["S-type", "C-type", "O-type", "R-type"],
+        "answer": 1
+    },
+    "K937": {
+        "question": "What was the estimated speed of the CME detected on September 8th, 2024?",
+        "options": ["350 km/s", "626 km/s", "900 km/s", "1200 km/s"],
+        "answer": 1
+    },
+    "L942": {
+        "question": "According to preliminary analysis, which NASA mission is expected to experience a glancing blow from the CME detected on September 8th, 2024?",
+        "options": ["Parker Solar Probe", "STEREO A", "Lucy", "All of the above"],
+        "answer": 3
+    },
+    "P148": {
+        "question": "When is the leading edge of the CME detected on September 8th, 2024 expected to reach Parker Solar Probe?",
+        "options": ["September 9th, 2024, 16:59Z", "September 10th, 2024, 16:04Z", "September 11th, 2024, 20:00Z", "September 12th, 2024, 02:00Z"],
+        "answer": 0
+    },
+    "Z319": {
+        "question": "What is the estimated range of the maximum Kp index for the CME detected on September 8th, 2024 impacting NASA missions near Earth?",
+        "options": ["0-2", "4-6", "7-9", "10-12"],
+        "answer": 1
     }
 }
 
