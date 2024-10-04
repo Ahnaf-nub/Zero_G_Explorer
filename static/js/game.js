@@ -198,9 +198,9 @@ function handleInput(){
 function uiHandling(){
   if(qMenu){
     if(qMenu.qz){
+      player.freeze();
       qMenu.show();
       qMenu.update(-1*inputH.checkInput("axisY"), inputH.getButton("select"));
-      player.freeze();
     }
   }
 }

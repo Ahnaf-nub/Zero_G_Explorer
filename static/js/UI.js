@@ -1,76 +1,122 @@
 class QuizMenu{
     constructor(qz=null){
         this.qz = qz;
-        this.selected = 0;
-        this.qTmr;
+        this.corr = false;
+        this.selected = 0;   
     }
 
     async getQuiz(){
         if(timer.isOver("newQ") && !this.qz){
             qThis = await getAPI("/quiz");
+            if(!qThis["question"]){
+                return;
+            }
             this.qz = qThis;
-            this.qTmr = timer.setTimer("newQ", 2000);
+            timer.setTimer("newQ", 2000);
             this.selected = 0;
+            timer.removeTimer("ansShow", 2000);
         }
     }
     show(){
         rectMode(CENTER);
         textAlign(CENTER, CENTER);
-        stroke(0, 255, 255);
+        
+        if(!timer.exists("ansShow")){
+            stroke(0, 255, 255);
 
-        push();
-        strokeWeight(ps(0.5));
-        noFill();
-        drawingContext.shadowOffsetX = 0;
-        drawingContext.shadowOffsetY = 0;
-        drawingContext.shadowBlur = 5;
-        drawingContext.shadowColor = color(0, 255, 255);
-        drawingContext.setLineDash([ps(5), ps(20)]);
-        rect(px(50), py(50), ps(94), ps(94), ps(7));
-        pop();
+            push();
+            strokeWeight(ps(0.5));
+            noFill();
+            drawingContext.shadowOffsetX = 0;
+            drawingContext.shadowOffsetY = 0;
+            drawingContext.shadowBlur = 5;
+            drawingContext.shadowColor = color(0, 255, 255);
+            drawingContext.setLineDash([ps(5), ps(20)]);
+            rect(px(50), py(50), ps(94), ps(94), ps(7));
+            pop();
 
-        noStroke();
-        fill(50, 170, 170, 200);
-        rect(px(50), py(50), ps(90), ps(90), ps(5));
-
-        textSize(ps(5));
-        fill(255, 255, 255);
-        text(this.qz.question, px(50), py(20), ps(80), ps(30));
-
-        for(let i=0; i<this.qz.options.length; i++){
-            let opt = this.qz.options[i];
-            if(i == this.selected){
-                fill(0, 255, 100);
-                noStroke();
-            }else{
-                noFill();
-                stroke(0, 255, 100);
-                strokeWeight(ps(0.5));
-            }
-            rect(px(50), py(46 + i*12), ps(75), ps(10), ps(2));
             noStroke();
+            fill(50, 170, 170, 200);
+            rect(px(50), py(50), ps(90), ps(90), ps(5));
+
+            textSize(ps(5));
             fill(255, 255, 255);
-            textSize(ps(3));
-            text(opt, px(50), py(46 + i*12), ps(80), ps(10));
+            text(this.qz.question, px(50), py(20), ps(80), ps(30));
+
+            for(let i=0; i<this.qz.options.length; i++){
+                let opt = this.qz.options[i];
+                if(i == this.selected){
+                    fill(0, 255, 100);
+                    noStroke();
+                }else{
+                    noFill();
+                    stroke(0, 255, 100);
+                    strokeWeight(ps(0.5));
+                }
+                rect(px(50), py(46 + i*12), ps(75), ps(10), ps(2));
+                noStroke();
+                fill(255, 255, 255);
+                textSize(ps(3));
+                text(opt, px(50), py(46 + i*12), ps(80), ps(10));
+            }
+        }
+        else{
+            stroke(255, 0, 255);
+            if(this.corr){stroke(0, 255, 150);}
+            push();
+            strokeWeight(ps(0.5));
+            noFill();
+            drawingContext.shadowOffsetX = 0;
+            drawingContext.shadowOffsetY = 0;
+            drawingContext.shadowBlur = 5;
+            drawingContext.shadowColor = (this.corr)? color(0, 255, 150) : color(255, 0, 255);
+            drawingContext.setLineDash([ps(20), ps(5)]);
+            rect(px(50), py(50), ps(94), ps(94), ps(7));
+            pop();
+
+            noStroke();
+            fill(170, 50, 170, 200);
+            if(this.corr){fill(50, 170, 120, 200);}
+            rect(px(50), py(50), ps(90), ps(90), ps(5));
+
+            textSize(ps(15));
+            fill(255, 255, 255);
+            if(this.corr){
+                text("Correct!", px(50), py(50));
+            }else{
+                text("Wrong!", px(50), py(50));
+            }
         }
     }
 
     async update(inp, sel){
+
         if(timer.isOver("qInp")){
             if(inp > 0.5){
                 this.selected += 1;
-                timer.setTimer("qInp", 500);
+                timer.setTimer("qInp", 250);
             }else if(inp < -0.5){
                 this.selected -= 1;
-                timer.setTimer("qInp", 500);
+                timer.setTimer("qInp", 250);
             }
             if(this.selected > this.qz.options.length-1) this.selected = 0;
             if(this.selected < 0) this.selected = this.qz.options.length-1;
         }
-        if(sel){
-            let corr = await getAPI(`quiz/${this.qz.id}/${this.selected}`);
+        if(inp == 0){
+            timer.removeTimer("qInp");
+        }
+        if(sel && !timer.exists("ansShow")){
+            let _corr = await getAPI(`quiz/${this.qz.id}/${this.selected}`);
+            this.corr = _corr["correct"];
+            timer.setTimer("ansShow", 2000);
+        }
+
+
+        if(timer.exists("ansShow") && timer.isOver("ansShow")){
             this.qz = null;
             player.unFreeze();
+            timer.removeTimer("ansShow");
+            this.corr = false;
         }
     }
 }

@@ -364,6 +364,7 @@ class Astronaut {
   unFreeze(){
     this.frozen = false;
     timer.removeTimer("freeze");
+    console.log("unfreeze");
   }
 
   attract(x, y, _force=0.1, minRd = 10){

@@ -211,6 +211,8 @@ async def get_quiz(request: Request):
     userDat = await get_full_user_data(request)
     usedQIDs = userDat[0]['usedQID']['qID']
     newID, newQuiz = quiz.get_quiz_today(usedQIDs)
+    if newID == None:
+        return {"message": "No more questions available for today."}
     usedQIDs.append(newID)
     try:
         update_response = supabase.table("users").update({"usedQID": {"qID": usedQIDs}}).eq("username", userDat[0]['username']).execute()

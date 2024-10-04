@@ -119,7 +119,8 @@ def get_quiz_today(listQ):
     for key in quiz_today.keys():
         if(not key in listQ):
             qID.append(key)
-
+    if(len(qID) == 0):
+        return None, None
     chosenID = random.choice(qID)
     return chosenID, quiz_today[chosenID]
 
