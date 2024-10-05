@@ -53,7 +53,7 @@ async def getDONKI():
 def setQuizzes(callback):
     print("Setting quizzes")
     
-    start_date = (datetime.utcnow() - timedelta(days=14)).strftime('%Y-%m-%d')
+    start_date = (datetime.utcnow() - timedelta(days=21)).strftime('%Y-%m-%d')
     donki_url = f"https://api.nasa.gov/DONKI/notifications?startDate={start_date}&type=all&api_key={NASA_API}"
     response = requests.get(donki_url)
     response.raise_for_status() 
