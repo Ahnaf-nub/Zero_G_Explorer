@@ -1,102 +1,122 @@
 {
-    "1728125398_Q123": {
-        "question": "On October 4th, 2024, NASA issued a space weather notification about a CME (Coronal Mass Ejection) that was detected by SOHO. What type of CME was it?",
+    "1728130628_HGU7": {
+        "question": "A C-type CME was detected by SOHO on October 3, 2024. What was the estimated speed of this CME?",
         "options": [
-            "S-type",
-            "C-type",
-            "O-type",
-            "R-type"
-        ],
-        "answer": 1
-    },
-    "1728125398_Q456": {
-        "question": "The CME detected by SOHO on October 4th, 2024, was associated with a flare from Active Region 13843. What was the intensity of this flare?",
-        "options": [
-            "M6.7",
-            "M8.0",
-            "X1.2",
-            "C3.5"
+            "646 km/s",
+            "832 km/s",
+            "706 km/s",
+            "822 km/s"
         ],
         "answer": 0
     },
-    "1728125398_Q789": {
-        "question": "A CME detected by STEREO A on October 3rd, 2024, was estimated to impact which space mission on October 4th, 2024?",
+    "1728130628_JHYU": {
+        "question": "What was the estimated opening half-angle of the CME that was detected by STEREO A / SOHO on October 3, 2024?",
         "options": [
-            "Lucy",
-            "Dawn",
-            "Mars",
-            "Solar Orbiter"
+            "39 deg",
+            "45 deg",
+            "36 deg",
+            "51 deg"
+        ],
+        "answer": 2
+    },
+    "1728130628_QWER": {
+        "question": "What was the start time of the CME that impacted Lucy on October 6, 2024?",
+        "options": [
+            "2024-10-03T20:36Z",
+            "2024-10-04T04:13Z",
+            "2024-10-03T13:27Z",
+            "2024-10-03T12:48Z"
         ],
         "answer": 3
     },
-    "1728125398_Q012": {
-        "question": "According to NASA's space weather notification on October 4th, 2024, what is the estimated opening half-angle of the CME that was detected by SOHO?",
+    "1728130628_TYUI": {
+        "question": "On October 3, 2024, a significant flare was detected by GOES. What was the peak time of this flare?",
         "options": [
-            "36 degrees",
-            "45 degrees",
-            "60 degrees",
-            "72 degrees"
-        ],
-        "answer": 1
-    },
-    "1728125398_Q345": {
-        "question": "The CME detected by SOHO on October 4th, 2024, was estimated to reach Mars on what date?",
-        "options": [
-            "October 6th, 2024",
-            "October 7th, 2024",
-            "October 8th, 2024",
-            "October 9th, 2024"
-        ],
-        "answer": 1
-    },
-    "1728125398_Q678": {
-        "question": "What was the estimated speed of the CME detected by STEREO A on October 3rd, 2024, which impacted Lucy and Solar Orbiter?",
-        "options": [
-            "646 km/s",
-            "706 km/s",
-            "832 km/s",
-            "999 km/s"
-        ],
-        "answer": 1
-    },
-    "1728125398_Q901": {
-        "question": "Based on simulations, NASA's space weather notification on October 4th, 2024, indicated that the combined front of two CMEs would reach NASA missions near Earth on what date?",
-        "options": [
-            "October 5th, 2024",
-            "October 6th, 2024",
-            "October 7th, 2024",
-            "October 8th, 2024"
-        ],
-        "answer": 1
-    },
-    "1728125398_Q234": {
-        "question": "The CME detected by SOHO on October 4th, 2024, was estimated to reach STEREO A on what date?",
-        "options": [
-            "October 5th, 2024",
-            "October 6th, 2024",
-            "October 7th, 2024",
-            "October 8th, 2024"
-        ],
-        "answer": 1
-    },
-    "1728125398_Q567": {
-        "question": "What is the estimated speed of the CME detected by SOHO on October 4th, 2024, that was associated with the M6.7 flare from Active Region 13843?",
-        "options": [
-            "646 km/s",
-            "706 km/s",
-            "832 km/s",
-            "999 km/s"
+            "2024-10-03T20:23Z",
+            "2024-10-03T20:28Z",
+            "2024-10-03T12:18Z",
+            "2024-10-03T20:09Z"
         ],
         "answer": 0
     },
-    "1728125398_Q890": {
-        "question": "What space mission was estimated to experience a glancing blow from the CME detected by SOHO on October 4th, 2024?",
+    "1728130628_OPAS": {
+        "question": "What is the estimated range of the maximum Kp index for the combined front of two CMEs that impacted NASA missions near Earth on October 6, 2024?",
         "options": [
-            "Lucy",
-            "Dawn",
-            "Solar Orbiter",
-            "STEREO A"
+            "2-4",
+            "4-6",
+            "5-7",
+            "1-3"
         ],
         "answer": 1
+    },
+    "1728130628_DFGH": {
+        "question": "What is the activity ID for the CME that was detected by SOHO on October 3, 2024?",
+        "options": [
+            "2024-10-03T20:36:00-CME-001",
+            "2024-10-04T04:13:00-CME-001",
+            "2024-10-03T13:27:00-CME-001",
+            "2024-10-03T12:48:00-CME-001"
+        ],
+        "answer": 0
+    },
+    "1728130628_ZXCV": {
+        "question": "A CME was detected by SOHO on October 3, 2024. What was the estimated opening half-angle of this CME?",
+        "options": [
+            "45 deg",
+            "36 deg",
+            "39 deg",
+            "51 deg"
+        ],
+        "answer": 0
+    },
+    "1728130628_LKJH": {
+        "question": "What was the intensity of the significant flare detected by GOES on October 3, 2024?",
+        "options": [
+            "M5.0",
+            "M6.7",
+            "X9.0",
+            "C-type"
+        ],
+        "answer": 1
+    },
+    "1728130628_ASDF": {
+        "question": "When did the combined front of the two CMEs reach NASA missions near Earth on October 6, 2024?",
+        "options": [
+            "2024-10-06T03:43Z",
+            "2024-10-06T19:18Z",
+            "2024-10-06T07:00Z",
+            "2024-10-06T12:02Z"
+        ],
+        "answer": 1
+    },
+    "1728130628_GHJK": {
+        "question": "What was the estimated speed of the CME detected by STEREO A / SOHO on October 3, 2024?",
+        "options": [
+            "822 km/s",
+            "706 km/s",
+            "646 km/s",
+            "832 km/s"
+        ],
+        "answer": 0
+    },
+    "1728130628_POIU": {
+        "question": "When did the flank of the CME detected by SOHO on October 3, 2024, reach NASA missions near Earth?",
+        "options": [
+            "2024-10-07T07:00Z",
+            "2024-10-06T12:02Z",
+            "2024-10-06T19:18Z",
+            "2024-10-07T03:43Z"
+        ],
+        "answer": 0
+    },
+    "1728130628_FGHT": {
+        "question": "What was the activity ID for the significant flare detected by GOES on October 3, 2024?",
+        "options": [
+            "2024-10-03T20:09:00-FLR-001",
+            "2024-10-03T12:08:00-FLR-001",
+            "2024-10-03T20:36:00-CME-001",
+            "2024-10-03T13:27:00-CME-001"
+        ],
+        "answer": 0
     }
 }

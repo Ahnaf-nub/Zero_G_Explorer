@@ -271,16 +271,19 @@ async def update_score(request: Request):
     scores.append(body)
     try:
         update_response = supabase.table("users").update({"score": {"scores": scores}}).eq("username", userDat[0]['username']).execute()
+        print("Updated in user table")
         supabase.table("Scores").insert({
-            "station": userDat[0]['station'],
+            "station": userDat[0]['space_station'],
             "player": userDat[0]['username'],
             "score": body['score'],
             "info": body
         }).execute()
+        print("Updated in Scores Table")
     except Exception as e:
+        print(e)
         print("error: Failed to update user data in supabase score table.")
 
-    return {"message": {"scores": scores}}  # Ensure scores are returned here
+    return {"message": {"scores": scores}}
 
 @app.get("/score")
 async def get_score(request: Request):

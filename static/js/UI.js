@@ -170,6 +170,7 @@ class QuizMenu{
 class EndMenu{
     constructor(){
         this.showing = false;
+        this.selected = 0;
     }
 
     show(){
@@ -215,9 +216,55 @@ class EndMenu{
             text(tScore, px(70), py(51));
 
             textSize(ps(5));
-            text("Total Score:", px(50), py(65));
+            text("Total Score:", px(50), py(62));
             textSize(ps(12));
-            text(qScore + tScore, px(50), py(75));
+            text(qScore + tScore, px(50), py(72));
+            
+            noStroke();
+            fill(25, 130, 50, 200);
+            rect(px(20), py(85), ps(20), ps(10), ps(3));
+            rect(px(80), py(85), ps(20), ps(10), ps(3));
+
+            noFill();
+            stroke(255, 255, 0);
+            strokeWeight(ps(0.5));
+            if(this.selected == 0){
+                rect(px(20), py(85), ps(20), ps(10), ps(3));
+            }else{
+                rect(px(80), py(85), ps(20), ps(10), ps(3));
+            }
+
+            fill(255);
+            noStroke();
+            textSize(ps(3));
+            text("Retry", px(20), py(85));
+            text("Home", px(80), py(85));
+        }
+    }
+
+    async update(inp, sel){
+
+        if(timer.isOver("emInp")){
+            if(inp > 0.5){
+                this.selected += 1;
+                timer.setTimer("emInp", 250);
+            }else if(inp < -0.5){
+                this.selected -= 1;
+                timer.setTimer("emInp", 250);
+            }
+            if(this.selected > 1) this.selected = 0;
+            if(this.selected < 0) this.selected = 1;
+        }
+        if(inp == 0){
+            timer.removeTimer("emInp");
+        }
+        if(sel){
+            if(this.selected == 0){
+                location.reload();
+            }
+            else if(this.selected == 1){
+                location.href = "/home";
+            }
         }
     }
 }

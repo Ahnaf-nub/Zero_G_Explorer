@@ -137,8 +137,8 @@ function draw() {
   push();
   scaleValue = constrain(lerp(scaleValue, targetScaleValue * map(player.getSpdP(), 0, 1, 1, 0.5), 0.05), targetScaleValue/2, targetScaleValue);
   scale(scaleValue);
-  camPos.x = lerp(camPos.x, player.x, 10*gDelta);
-  camPos.y = lerp(camPos.y, player.y, 10*gDelta);
+  camPos.x = lerp(camPos.x, player.x, constrain(10*gDelta, 0, 1));
+  camPos.y = lerp(camPos.y, player.y, constrain(10*gDelta, 0, 1));
   translate(width/(2*scaleValue) - camPos.x, height/(2*scaleValue) - camPos.y);
 
   for(let i=particles.length-1; i>=0; i--){
@@ -250,6 +250,7 @@ function uiHandling(){
       submitScore();
     }
     eMenu.show();
+    eMenu.update(inputH.checkInput("axisY") + inputH.checkInput("axisX"), inputH.getButton("select"));
     player.freeze();
   }
 }
