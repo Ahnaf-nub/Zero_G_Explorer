@@ -7,12 +7,14 @@ from dotenv import load_dotenv
 from supabase import create_client
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
+import schedule
 import os
 import bcrypt
 
 import quiz
 
 load_dotenv()
+
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
@@ -28,6 +30,11 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
+quiz.update_quiz()
+print("\n---\nUpdating\n---\n")
+
+schedule.every().day.at("00:00").do(quiz.update_quiz)
 
 # Pydantic model for user input
 class TokenData(BaseModel):
@@ -96,7 +103,7 @@ async def login_page(request: Request):
             print("Token from login page")
             tokenValid = verify_token(token)  # If token is valid, redirect to game/home page
             if(tokenValid):
-                return RedirectResponse(url="/game", status_code=302)
+                return RedirectResponse(url="/home", status_code=302)
         except JWTError:
             pass  # If token is invalid, show the login form
     return templates.TemplateResponse("login.html", {"request": request})
