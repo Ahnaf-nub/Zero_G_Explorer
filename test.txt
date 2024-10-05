@@ -1,0 +1,46 @@
+Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )
+Message Type: Space Weather Notification - CME (Parker Solar Probe, STEREO A, Lucy, Mars, Missions Near Earth)
+
+Message Issue Date: 2024-09-08T17:30:12Z
+Message ID: 20240908-AL-001
+
+Disclaimer: NOAA's Space Weather Prediction Center is the United States Government official source for space weather forecasts. This "Experimental Research Information" consists of preliminary NASA research products and should be interpreted and used accordingly.
+
+Summary:
+
+C-type CME detected by STEREO A / SOHO.
+
+Start time of the event: 2024-09-08T01:36Z.
+
+Estimated speed: ~626 km/s.
+
+Estimated opening half-angle: 41 deg.
+
+Direction (lon./lat.): 23/22 in Heliocentric Earth Equatorial coordinates.
+
+Activity ID: 2024-09-08T01:36:00-CME-001
+
+Based on preliminary analysis by the Moon to Mars Space Weather Analysis Office and heliospheric modeling carried out at NASA Community Coordinated Modeling Center, it is estimated that this CME may affect Parker Solar Probe, STEREO A, Lucy (glancing blow), and Mars (glancing blow). The leading edge of the CME will reach Parker Solar Probe at 2024-09-09T16:59Z and STEREO A at 2024-09-10T16:04Z and the flank of the CME may reach Lucy at 2024-09-11T20:00Z and Mars at 2024-09-12T02:00Z (plus minus 7 hours).
+
+The simulation also indicates that the CME may impact NASA missions near Earth. Simulations indicate that the leading edge of the CME will reach NASA missions near Earth at about 2024-09-10T23:51Z (plus minus 7 hours). The roughly estimated expected range of the maximum Kp index is 4-6 (below minor to moderate).
+
+Links to the movies of the modeled event (includes CME: 2024-09-08T01:36:00-CME-001):
+
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_anim.tim-den.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_anim.tim-vel.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_anim.tim-den-Stereo_A.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_anim.tim-vel-Stereo_A.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_ENLIL_CONE_timeline.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_ENLIL_CONE_PSP_timeline.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_ENLIL_CONE_STA_timeline.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_ENLIL_CONE_Lucy_timeline.gif
+http://iswa.gsfc.nasa.gov/downloads/20240908_063900_2.0_ENLIL_CONE_Mars_timeline.gif
+
+Notes:
+
+SCORE CME typification system:
+S-type: CMEs with speeds less than 500 km/s
+C-type: Common 500-999 km/s
+O-type: Occasional 1000-1999 km/s
+R-type: Rare 2000-2999 km/s
+ER-type: Extremely Rare >3000 km/s
