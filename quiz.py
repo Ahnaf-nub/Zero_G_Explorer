@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import time
 from dotenv import load_dotenv
 import os
 import requests
@@ -55,13 +56,18 @@ def setQuizzes():
     response.raise_for_status() 
     donky = response.json()
 
-    donky = donky[:min(4, len(donky))]
+    donky = donky[:min(6, len(donky))]
 
     quizQ = gem.getQuestions(f"{donky}")
     
+    prefix = f"{int(time.time())}"
+
+    quizQ = {f"{prefix}_{key}": value for key, value in quizQ.items()}
+
     with open('Quizzes.json', 'w') as file:
         json.dump(quizQ, file, indent=4)
     
+    print("Quizzes set")
     return None
 
 def update_quiz():

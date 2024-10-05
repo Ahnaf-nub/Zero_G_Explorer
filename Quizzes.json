@@ -1,76 +1,6 @@
 {
-    "Q123": {
-        "question": "What type of space weather event was detected by SOHO on October 3, 2024?",
-        "options": [
-            "Solar Flare",
-            "Coronal Mass Ejection (CME)",
-            "Geomagnetic Storm",
-            "Solar Wind"
-        ],
-        "answer": 1
-    },
-    "Q456": {
-        "question": "What was the estimated speed of the CME detected by SOHO on October 3, 2024?",
-        "options": [
-            "500 km/s",
-            "646 km/s",
-            "832 km/s",
-            "706 km/s"
-        ],
-        "answer": 1
-    },
-    "Q789": {
-        "question": "Which NASA mission was predicted to be affected by the flank of the CME detected by SOHO on October 3, 2024?",
-        "options": [
-            "Dawn",
-            "Lucy",
-            "Mars",
-            "Solar Orbiter"
-        ],
-        "answer": 0
-    },
-    "Q012": {
-        "question": "What was the estimated opening half-angle of the CME detected by SOHO on October 3, 2024?",
-        "options": [
-            "36 deg",
-            "45 deg",
-            "51 deg",
-            "22 deg"
-        ],
-        "answer": 1
-    },
-    "Q345": {
-        "question": "On which date was the CME detected by SOHO on October 3, 2024 predicted to impact NASA missions near Earth?",
-        "options": [
-            "October 4, 2024",
-            "October 5, 2024",
-            "October 6, 2024",
-            "October 7, 2024"
-        ],
-        "answer": 2
-    },
-    "Q678": {
-        "question": "What was the predicted range of the maximum Kp index for the CME detected by SOHO on October 3, 2024?",
-        "options": [
-            "2-4",
-            "4-6",
-            "6-8",
-            "8-10"
-        ],
-        "answer": 0
-    },
-    "Q901": {
-        "question": "What was the activity ID of the CME detected by SOHO on October 3, 2024?",
-        "options": [
-            "2024-10-03T13:27:00-CME-001",
-            "2024-10-04T04:13:00-CME-001",
-            "2024-10-03T20:36:00-CME-001",
-            "2024-10-03T20:09:00-FLR-001"
-        ],
-        "answer": 2
-    },
-    "Q234": {
-        "question": "What type of CME was detected by SOHO on October 3, 2024?",
+    "1728125398_Q123": {
+        "question": "On October 4th, 2024, NASA issued a space weather notification about a CME (Coronal Mass Ejection) that was detected by SOHO. What type of CME was it?",
         "options": [
             "S-type",
             "C-type",
@@ -79,124 +9,94 @@
         ],
         "answer": 1
     },
-    "Q567": {
-        "question": "Which NASA mission was predicted to be affected by the leading edge of the CME detected by SOHO on October 3, 2024?",
+    "1728125398_Q456": {
+        "question": "The CME detected by SOHO on October 4th, 2024, was associated with a flare from Active Region 13843. What was the intensity of this flare?",
         "options": [
-            "Dawn",
-            "Lucy",
-            "Mars",
-            "Solar Orbiter"
-        ],
-        "answer": 2
-    },
-    "Q890": {
-        "question": "What was the predicted date for the leading edge of the CME detected by SOHO on October 3, 2024 to reach Mars?",
-        "options": [
-            "October 4, 2024",
-            "October 5, 2024",
-            "October 6, 2024",
-            "October 7, 2024"
-        ],
-        "answer": 3
-    },
-    "Q111": {
-        "question": "What was the predicted date for the leading edge of the combined front of the two CMEs to reach STEREO A?",
-        "options": [
-            "October 4, 2024",
-            "October 5, 2024",
-            "October 6, 2024",
-            "October 7, 2024"
-        ],
-        "answer": 2
-    },
-    "Q444": {
-        "question": "Which NASA mission was predicted to be affected by the flank of the CME with the start time 2024-10-03T20:36:00Z?",
-        "options": [
-            "Dawn",
-            "Lucy",
-            "Mars",
-            "Solar Orbiter"
+            "M6.7",
+            "M8.0",
+            "X1.2",
+            "C3.5"
         ],
         "answer": 0
     },
-    "Q777": {
-        "question": "What was the predicted date for the flank of the CME with the start time 2024-10-03T20:36:00Z to reach Dawn?",
+    "1728125398_Q789": {
+        "question": "A CME detected by STEREO A on October 3rd, 2024, was estimated to impact which space mission on October 4th, 2024?",
         "options": [
-            "October 14, 2024",
-            "October 15, 2024",
-            "October 16, 2024",
-            "October 17, 2024"
+            "Lucy",
+            "Dawn",
+            "Mars",
+            "Solar Orbiter"
         ],
-        "answer": 2
+        "answer": 3
     },
-    "Q000": {
-        "question": "What was the direction of the CME with the start time 2024-10-04T04:13Z in Heliocentric Earth Equatorial coordinates?",
+    "1728125398_Q012": {
+        "question": "According to NASA's space weather notification on October 4th, 2024, what is the estimated opening half-angle of the CME that was detected by SOHO?",
         "options": [
-            "51/1",
-            "22/-19",
-            "-62/26",
-            "10/10"
+            "36 degrees",
+            "45 degrees",
+            "60 degrees",
+            "72 degrees"
         ],
         "answer": 1
     },
-    "Q333": {
-        "question": "What was the estimated speed of the CME with the start time 2024-10-04T04:13Z?",
+    "1728125398_Q345": {
+        "question": "The CME detected by SOHO on October 4th, 2024, was estimated to reach Mars on what date?",
+        "options": [
+            "October 6th, 2024",
+            "October 7th, 2024",
+            "October 8th, 2024",
+            "October 9th, 2024"
+        ],
+        "answer": 1
+    },
+    "1728125398_Q678": {
+        "question": "What was the estimated speed of the CME detected by STEREO A on October 3rd, 2024, which impacted Lucy and Solar Orbiter?",
         "options": [
             "646 km/s",
             "706 km/s",
             "832 km/s",
-            "500 km/s"
+            "999 km/s"
         ],
-        "answer": 2
+        "answer": 1
     },
-    "Q666": {
-        "question": "Which NASA mission was predicted to be affected by the flank of the CME with the start time 2024-10-04T04:13Z?",
+    "1728125398_Q901": {
+        "question": "Based on simulations, NASA's space weather notification on October 4th, 2024, indicated that the combined front of two CMEs would reach NASA missions near Earth on what date?",
         "options": [
-            "Dawn",
+            "October 5th, 2024",
+            "October 6th, 2024",
+            "October 7th, 2024",
+            "October 8th, 2024"
+        ],
+        "answer": 1
+    },
+    "1728125398_Q234": {
+        "question": "The CME detected by SOHO on October 4th, 2024, was estimated to reach STEREO A on what date?",
+        "options": [
+            "October 5th, 2024",
+            "October 6th, 2024",
+            "October 7th, 2024",
+            "October 8th, 2024"
+        ],
+        "answer": 1
+    },
+    "1728125398_Q567": {
+        "question": "What is the estimated speed of the CME detected by SOHO on October 4th, 2024, that was associated with the M6.7 flare from Active Region 13843?",
+        "options": [
+            "646 km/s",
+            "706 km/s",
+            "832 km/s",
+            "999 km/s"
+        ],
+        "answer": 0
+    },
+    "1728125398_Q890": {
+        "question": "What space mission was estimated to experience a glancing blow from the CME detected by SOHO on October 4th, 2024?",
+        "options": [
             "Lucy",
-            "Mars",
-            "Solar Orbiter"
+            "Dawn",
+            "Solar Orbiter",
+            "STEREO A"
         ],
         "answer": 1
-    },
-    "Q999": {
-        "question": "What was the estimated opening half-angle of the CME with the start time 2024-10-04T04:13Z?",
-        "options": [
-            "36 deg",
-            "45 deg",
-            "51 deg",
-            "22 deg"
-        ],
-        "answer": 1
-    },
-    "Q222": {
-        "question": "What was the predicted date for the flank of the CME with the start time 2024-10-04T04:13Z to reach Lucy?",
-        "options": [
-            "October 4, 2024",
-            "October 5, 2024",
-            "October 6, 2024",
-            "October 7, 2024"
-        ],
-        "answer": 3
-    },
-    "Q555": {
-        "question": "What was the predicted date for the combined front of the two CMEs to reach NASA missions near Earth?",
-        "options": [
-            "October 4, 2024",
-            "October 5, 2024",
-            "October 6, 2024",
-            "October 7, 2024"
-        ],
-        "answer": 2
-    },
-    "Q888": {
-        "question": "What was the predicted date for the leading edge of the combined front of the two CMEs to reach Mars?",
-        "options": [
-            "October 4, 2024",
-            "October 5, 2024",
-            "October 6, 2024",
-            "October 7, 2024"
-        ],
-        "answer": 3
     }
 }
