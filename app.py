@@ -31,10 +31,9 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-quiz.update_quiz()
-print("\n---\nUpdating\n---\n")
-
-schedule.every().day.at("00:00").do(quiz.update_quiz)
+sysRes = supabase.table("sysInfo").select("*").limit(1).execute()
+sysInfo = sysRes.data
+quiz.startup(sysInfo[0])
 
 # Pydantic model for user input
 class TokenData(BaseModel):
@@ -172,6 +171,17 @@ async def home_page(request: Request, current_user: TokenData = Depends(get_curr
 @app.get("/game", response_class=HTMLResponse)
 async def game_page(request: Request, current_user: TokenData = Depends(get_current_user)):
     if(current_user):
+        userDat = await get_full_user_data(request)
+        usedQIDs = userDat[0]['usedQID']["qID"]
+
+        if(len(usedQIDs) > 0):
+            if(not usedQIDs[0] in quiz.quiz_today.keys()):
+                try:
+                    supabase.table("users").update({"usedQID": {"qID": []}}).eq("username", current_user.username).execute()
+                except Exception as e:
+                    print(e)
+                    print("error: Failed to update user data in supabase.")
+
         return templates.TemplateResponse("game.html", {"request": request, "username": current_user.username})
     return RedirectResponse(url="/login", status_code=302)
 
@@ -311,6 +321,27 @@ async def logout():
     response = RedirectResponse(url="/login", status_code=302)
     response.delete_cookie(key="token")
     return response
+
+def update_sys_data(qz):
+    #print(qz)
+    try:
+        supabase.table("sysInfo")\
+            .update({
+                "lastUpdate": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+                "quizToday":qz
+            })\
+            .eq("id", 1)\
+            .execute()
+    except Exception as e:
+        print(e)
+    
+
+
+quiz.update_quiz(update_sys_data, sysInfo[0]['lastUpdate'])
+print("\n---\nUpdating\n---\n")
+
+schedule.every().day.at("00:00").do(lambda: quiz.update_quiz(update_sys_data))
+
 
 if __name__ == "__main__":
     import uvicorn

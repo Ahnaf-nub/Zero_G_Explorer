@@ -14,8 +14,10 @@ NASA_API = os.getenv("NASA_API_KEY")
 
 quiz_today = {}
 
-with open('Quizzes.json', 'r') as file:
-    quiz_today = json.load(file)
+def startup(data):
+    global quiz_today
+    gem.setModel(data["sysPrompt"])
+    quiz_today = data["quizToday"]
 
 def get_quiz_today(listQ):
     qID = []
@@ -48,15 +50,16 @@ async def getDONKI():
     return events_data
 
 
-def setQuizzes():
+def setQuizzes(callback):
     print("Setting quizzes")
-    start_date = (datetime.utcnow() - timedelta(days=7)).strftime('%Y-%m-%d')
+    
+    start_date = (datetime.utcnow() - timedelta(days=14)).strftime('%Y-%m-%d')
     donki_url = f"https://api.nasa.gov/DONKI/notifications?startDate={start_date}&type=all&api_key={NASA_API}"
     response = requests.get(donki_url)
     response.raise_for_status() 
     donky = response.json()
 
-    donky = donky[:min(6, len(donky))]
+    donky = donky[:min(10, len(donky))]
 
     quizQ = gem.getQuestions(f"{donky}")
     
@@ -64,12 +67,17 @@ def setQuizzes():
 
     quizQ = {f"{prefix}_{key}": value for key, value in quizQ.items()}
 
-    with open('Quizzes.json', 'w') as file:
-        json.dump(quizQ, file, indent=4)
+    callback(quizQ)
     
     print("Quizzes set")
     return None
 
-def update_quiz():
-    thread = threading.Thread(target=setQuizzes)
-    thread.start()
+def update_quiz(callback, last = "2000-01-01T00:00:00"):
+
+    d1 = datetime.strptime(last, '%Y-%m-%dT%H:%M:%S')
+    d2 = datetime.now()
+    diff = (d2 - d1).total_seconds() / 3600
+    print(diff)
+    if(diff > 24):
+        thread = threading.Thread(target=setQuizzes, args=(callback,))
+        thread.start()
