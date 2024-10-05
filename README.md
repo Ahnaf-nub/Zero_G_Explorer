@@ -60,18 +60,37 @@ The game tracks individual scores and ranks them on a global leaderboard. Space 
 
 ## 👩‍💻 **Installation and Setup**
 
+**Make sure you have Python (>3.9) installed**
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/Ahnaf-nub/Zero_G_Explorer.git
    ```
 
-2. Install necessary dependencies:
+2. Activate virtual environment and install the necessary dependencies:
    ```bash
    cd Zero_G_Explorer
+   ```
+   ```
+   pip install virtualenv
+   python3 -m venv .venv
+   .venv\Scripts\activate
+   ```
+   ```
    pip install -r requirements.txt
    ```
-
-3. Run the game locally:
+3. Create a file to keep the environment variables name ` .env `
+   Keep your API keys and other secrets following this template:
+   ```
+   SUPABASE_URL= YOUR_SUPABASE_URL
+   SUPABASE_KEY= YOUR_SUPABASE_KEY
+   NASA_API_KEY= "DEMO_KEY"
+   JWT_SECRET= ANY_SECRET_KEY
+   ALGORITHM="HS256"
+   ACCESS_TOKEN_EXPIRE_MINUTES=43200
+   GEM_API= GEMINI_API_KEY
+   ```
+4. Run the game locally:
    ```bash
    python3 app.py
    ```
