@@ -4,7 +4,7 @@ passlib
 supabase
 python-dotenv
 pydantic
-psycopg2
+psycopg2-binary
 bcrypt
 jinja2
 python-multipart
