@@ -1,7 +1,8 @@
 # 🚀 **ZeroG-Explorer**: Space-based Fun and Learning for Astronauts
-Try it out at: **https://https://zerogexplorer.vercel.app**
+
 **Developed by Team Hardware-Synapse for the NASA Space Apps Challenge**
 
+Try it out at: **https://https://zerogexplorer.vercel.app**
 ---
 
 ## 🌌 **Project Overview**
