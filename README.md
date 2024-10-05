@@ -2,7 +2,7 @@
 
 **Developed by Team Hardware-Synapse for the NASA Space Apps Challenge**
 
-Try it out at: **https://https://zerogexplorer.vercel.app**
+Try it out at: **https://zerogexplorer.vercel.app**
 ---
 
 ## 🌌 **Project Overview**
